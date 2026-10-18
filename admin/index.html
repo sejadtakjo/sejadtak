@@ -59,6 +59,13 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--orange)}
 @media(max-width:520px){.g2{grid-template-columns:1fr}.row{flex-wrap:wrap}}
 .sz{display:grid;grid-template-columns:1.3fr 1fr 1fr auto;gap:8px;align-items:end}
 .sz .fld>span{font-size:13px}
+.sz4{display:grid;grid-template-columns:1.4fr 1fr 1fr .8fr auto;gap:8px;align-items:end}
+.sz4 .fld>span{font-size:13px}
+@media(max-width:520px){.sz4{grid-template-columns:1fr 1fr}.sz4 .fld:first-child{grid-column:1/-1}}
+.crop{display:flex;flex-direction:column;gap:12px;align-items:center}
+.crop canvas{width:min(86vw,380px);height:min(86vw,380px);border-radius:14px;border:2px solid var(--orange);touch-action:none;cursor:grab;background:repeating-conic-gradient(#d9d2c0 0 25%,#f2e8d5 0 50%) 0 0/20px 20px}
+.crop .tools{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;width:100%}
+.crop input[type=range]{width:min(86vw,380px)}
 .imgs{display:flex;flex-wrap:wrap;gap:10px}
 .im{position:relative;width:92px;height:92px;border-radius:12px;background:#F2E8D5;overflow:hidden}
 .im img{width:100%;height:100%;object-fit:contain}
@@ -100,7 +107,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--orange)}
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 <script src="/config.js"></script>
 <script>
-var MANIFEST=[{"k": "t14umzdr", "d": "سجادتك", "g": "الشريط العلوي"}, {"k": "tjepo27", "d": "الرئيسية", "g": "الشريط العلوي"}, {"k": "t1pelkjv", "d": "آراء العملاء", "g": "الشريط العلوي"}, {"k": "t1cy1d2h", "d": "المفضلة", "g": "الشريط العلوي"}, {"k": "t1hjhbqg", "d": "السلة", "g": "الشريط العلوي"}, {"k": "t1w3n2q8", "d": "سجاد سيارات", "g": "الواجهة الرئيسية"}, {"k": "to8klox", "d": "اضغط للقسم", "g": "الواجهة الرئيسية"}, {"k": "tz40rj9", "d": "سجاد كيبورد", "g": "الواجهة الرئيسية"}, {"k": "tj5m3jr", "d": "سجاد حائط", "g": "الواجهة الرئيسية"}, {"k": "t960ayd", "d": "سجاد أرضيات", "g": "الواجهة الرئيسية"}, {"k": "t3i9l3v", "d": "تصميمك . خيوطنا . سجادتك", "g": "الواجهة الرئيسية"}, {"k": "t8u5wya", "d": "انزل لتشاهد المزيد", "g": "الواجهة الرئيسية"}, {"k": "t1nr0utr", "d": "تصميمك", "g": "الشريط البرتقالي المتحرك"}, {"k": "t1ijjv7n", "d": "خيوطنا", "g": "الشريط البرتقالي المتحرك"}, {"k": "t1u9oiue", "d": "منتجاتنا", "g": "عناوين الأقسام"}, {"k": "tib4fra", "d": "اسحب كل صف جانباً لتشاهد المزيد من السجادات.", "g": "عناوين الأقسام"}, {"k": "t1fpzfce", "d": "اسحب لتشاهد المزيد", "g": "عناوين الأقسام"}, {"k": "t1nqcr2a", "d": "أضف رأيك", "g": "عناوين الأقسام"}, {"k": "tfz1oel", "d": "شاركنا تجربتك", "g": "عناوين الأقسام"}, {"k": "tzv6lhx", "d": "اكتب رأيك وارفع صورتك", "g": "عناوين الأقسام"}, {"k": "t10op9a5", "d": "عمّان، الأردن · sejadtak.shop", "g": "أسفل الصفحة"}, {"k": "t19xd18w", "d": "اطلب تصميمك الخاص", "g": "أسفل الصفحة"}, {"k": "t1xhodnm", "d": "إنستغرام", "g": "أسفل الصفحة"}, {"k": "t78hqc8", "d": "فيسبوك", "g": "أسفل الصفحة"}, {"k": "t1olk4kw", "d": "قريباً", "g": "السلة وصفحة المنتج ونموذج الطلب"}, {"k": "tsls223", "d": "خصم", "g": "السلة وصفحة المنتج ونموذج الطلب"}, {"k": "tsnbdro", "d": "الحجم المتوفر", "g": "السلة وصفحة المنتج ونموذج الطلب"}, {"k": "tc1orpo", "d": "مدة التنفيذ", "g": "السلة وصفحة المنتج ونموذج الطلب"}, {"k": "t1ph43zc", "d": "أيام", "g": "السلة وصفحة المنتج ونموذج الطلب"}, {"k": "t1mm0b27", "d": "الكمية", "g": "السلة وصفحة المنتج ونموذج الطلب"}, {"k": "t1e0dbwh", "d": "المجموع", "g": "السلة وصفحة المنتج ونموذج الطلب"}, {"k": "tqn3qxs", "d": "أضف إلى السلة", "g": "السلة وصفحة المنتج ونموذج الطلب"}, {"k": "t1prepa", "d": "اطلب الآن", "g": "السلة وصفحة المنتج ونموذج الطلب"}, {"k": "tzgivc6", "d": "الحجم", "g": "السلة وصفحة المنتج ونموذج الطلب"}, {"k": "t9m9cf9", "d": "عدد القطع", "g": "السلة وصفحة المنتج ونموذج الطلب"}, {"k": "t1h1mt3v", "d": "متابعة التسوق", "g": "السلة وصفحة المنتج ونموذج الطلب"}, {"k": "txlemaq", "d": "السلة فارغة حالياً", "g": "السلة وصفحة المنتج ونموذج الطلب"}, {"k": "t15ph0kx", "d": "تصفح المنتجات", "g": "السلة وصفحة المنتج ونموذج الطلب"}, {"k": "tmx02ru", "d": "لم تضف أي قطعة للمفضلة بعد.", "g": "السلة وصفحة المنتج ونموذج الطلب"}, {"k": "t134xqt1", "d": "اضغط على القلب بجانب السعر لحفظ ما يعجبك.", "g": "السلة وصفحة المنتج ونموذج الطلب"}, {"k": "tdgq6pd", "d": "للسلة", "g": "السلة وصفحة المنتج ونموذج الطلب"}, {"k": "t1xg9sxi", "d": "نوع الطلب", "g": "السلة وصفحة المنتج ونموذج الطلب"}, {"k": "tn2m3t0", "d": "تصميم خاص", "g": "السلة وصفحة المنتج ونموذج الطلب"}, {"k": "tpt1g71", "d": "السعر والمدة", "g": "السلة وصفحة المنتج ونموذج الطلب"}, {"k": "t8naz3r", "d": "نحددها بعد مراجعة تصميمك", "g": "السلة وصفحة المنتج ونموذج الطلب"}, {"k": "t1w3epm8", "d": "السعر النهائي", "g": "السلة وصفحة المنتج ونموذج الطلب"}, {"k": "tdlmco0", "d": "تصميمك الخاص", "g": "السلة وصفحة المنتج ونموذج الطلب"}, {"k": "t1r5x45m", "d": "خطوة أخيرة", "g": "السلة وصفحة المنتج ونموذج الطلب"}, {"k": "tf4lemb", "d": "معلومات الطلب", "g": "السلة وصفحة المنتج ونموذج الطلب"}, {"k": "t16duk29", "d": "الاسم الكامل", "g": "السلة وصفحة المنتج ونموذج الطلب"}, {"k": "teh9c3v", "d": "رقم الهاتف", "g": "السلة وصفحة المنتج ونموذج الطلب"}, {"k": "th6d8c7", "d": "المنطقة", "g": "السلة وصفحة المنتج ونموذج الطلب"}, {"k": "t1gqqspt", "d": "العنوان التفصيلي", "g": "السلة وصفحة المنتج ونموذج الطلب"}, {"k": "t1vq274", "d": "صورة تصميمك", "g": "السلة وصفحة المنتج ونموذج الطلب"}, {"k": "t1qrwrd0", "d": "إضافة صورة (اختياري)", "g": "السلة وصفحة المنتج ونموذج الطلب"}, {"k": "t6ij3cw", "d": "اختر صورة", "g": "السلة وصفحة المنتج ونموذج الطلب"}, {"k": "t158yb4b", "d": "أرسل الطلب على واتساب", "g": "السلة وصفحة المنتج ونموذج الطلب"}, {"k": "t1dwe0m2", "d": "إلغاء", "g": "السلة وصفحة المنتج ونموذج الطلب"}, {"k": "tbif6y7", "d": "تم تجهيز طلبك", "g": "السلة وصفحة المنتج ونموذج الطلب"}, {"k": "ty8tz9q", "d": "فتح واتساب مرة أخرى", "g": "السلة وصفحة المنتج ونموذج الطلب"}, {"k": "tysudiz", "d": "إغلاق", "g": "السلة وصفحة المنتج ونموذج الطلب"}, {"k": "ti2aat2", "d": "أُضيفت إلى السلة ✓", "g": "السلة وصفحة المنتج ونموذج الطلب"}, {"k": "t1bmgmig", "d": "واتساب", "g": "السلة وصفحة المنتج ونموذج الطلب"}, {"k": "tvjfzt2", "d": "اختياري", "g": "السلة وصفحة المنتج ونموذج الطلب"}, {"k": "t1j0n8c2", "d": "صورة تصميمك (مطلوبة)", "g": "السلة وصفحة المنتج ونموذج الطلب"}, {"k": "t1pir2ib", "d": "جاري إرسال طلبك...", "g": "السلة وصفحة المنتج ونموذج الطلب"}, {"k": "txkisdk", "d": "تم الطلب", "g": "السلة وصفحة المنتج ونموذج الطلب"}, {"k": "t1hjp7xk", "d": "وصلنا طلبك يا", "g": "السلة وصفحة المنتج ونموذج الطلب"}, {"k": "tp2dpf4", "d": "وسنتواصل معك قريباً على رقمك لتأكيد التفاصيل.", "g": "السلة وصفحة المنتج ونموذج الطلب"}, {"k": "t5xddmw", "d": "تمام", "g": "السلة وصفحة المنتج ونموذج الطلب"}, {"k": "tg12p47", "d": "اسمك", "g": "السلة وصفحة المنتج ونموذج الطلب"}, {"k": "tv4jzyx", "d": "التقييم", "g": "السلة وصفحة المنتج ونموذج الطلب"}, {"k": "t10gv4if", "d": "رأيك بالسجادة", "g": "السلة وصفحة المنتج ونموذج الطلب"}, {"k": "t7bns46", "d": "إرسال رأيك", "g": "السلة وصفحة المنتج ونموذج الطلب"}, {"k": "t1ipztg8", "d": "جاري الإرسال...", "g": "السلة وصفحة المنتج ونموذج الطلب"}, {"k": "t1vhxq9x", "d": "شكراً لك!", "g": "السلة وصفحة المنتج ونموذج الطلب"}, {"k": "t1wjtsav", "d": "وصل رأيك وسيظهر بعد مراجعته.", "g": "السلة وصفحة المنتج ونموذج الطلب"}];
+var MANIFEST=[{"k": "t14umzdr", "d": "سجادتك", "g": "الشريط العلوي"}, {"k": "tjepo27", "d": "الرئيسية", "g": "الشريط العلوي"}, {"k": "t1pelkjv", "d": "آراء العملاء", "g": "الشريط العلوي"}, {"k": "t1cy1d2h", "d": "المفضلة", "g": "الشريط العلوي"}, {"k": "t1hjhbqg", "d": "السلة", "g": "الشريط العلوي"}, {"k": "t1w3n2q8", "d": "سجاد سيارات", "g": "الواجهة الرئيسية"}, {"k": "to8klox", "d": "اضغط للقسم", "g": "الواجهة الرئيسية"}, {"k": "tz40rj9", "d": "سجاد كيبورد", "g": "الواجهة الرئيسية"}, {"k": "tj5m3jr", "d": "سجاد حائط", "g": "الواجهة الرئيسية"}, {"k": "t960ayd", "d": "سجاد أرضيات", "g": "الواجهة الرئيسية"}, {"k": "t3i9l3v", "d": "تصميمك . خيوطنا . سجادتك", "g": "الواجهة الرئيسية"}, {"k": "t8u5wya", "d": "انزل لتشاهد المزيد", "g": "الواجهة الرئيسية"}, {"k": "t1nr0utr", "d": "تصميمك", "g": "الشريط البرتقالي المتحرك"}, {"k": "t1ijjv7n", "d": "خيوطنا", "g": "الشريط البرتقالي المتحرك"}, {"k": "t1u9oiue", "d": "منتجاتنا", "g": "عناوين الأقسام"}, {"k": "tib4fra", "d": "اسحب كل صف جانباً لتشاهد المزيد من السجادات.", "g": "عناوين الأقسام"}, {"k": "tjrt3jv", "d": "حجم صغير", "g": "عناوين الأقسام"}, {"k": "t11v6wpv", "d": "حجم كبير", "g": "عناوين الأقسام"}, {"k": "t1fpzfce", "d": "اسحب لتشاهد المزيد", "g": "عناوين الأقسام"}, {"k": "t1nqcr2a", "d": "أضف رأيك", "g": "عناوين الأقسام"}, {"k": "tfz1oel", "d": "شاركنا تجربتك", "g": "عناوين الأقسام"}, {"k": "tzv6lhx", "d": "اكتب رأيك وارفع صورتك", "g": "عناوين الأقسام"}, {"k": "t10op9a5", "d": "عمّان، الأردن · sejadtak.shop", "g": "أسفل الصفحة"}, {"k": "t19xd18w", "d": "اطلب تصميمك الخاص", "g": "أسفل الصفحة"}, {"k": "t1xhodnm", "d": "إنستغرام", "g": "أسفل الصفحة"}, {"k": "t78hqc8", "d": "فيسبوك", "g": "أسفل الصفحة"}, {"k": "tkw1", "d": "تصميمك", "g": "السلة وصفحة المنتج ونموذج الطلب"}, {"k": "tkw2", "d": "خيوطنا", "g": "السلة وصفحة المنتج ونموذج الطلب"}, {"k": "tkw3", "d": "سجادتك", "g": "السلة وصفحة المنتج ونموذج الطلب"}, {"k": "t1olk4kw", "d": "قريباً", "g": "السلة وصفحة المنتج ونموذج الطلب"}, {"k": "tsls223", "d": "خصم", "g": "السلة وصفحة المنتج ونموذج الطلب"}, {"k": "t1ugogy0", "d": "وفّر", "g": "السلة وصفحة المنتج ونموذج الطلب"}, {"k": "tsnbdro", "d": "الحجم المتوفر", "g": "السلة وصفحة المنتج ونموذج الطلب"}, {"k": "tc1orpo", "d": "مدة التنفيذ", "g": "السلة وصفحة المنتج ونموذج الطلب"}, {"k": "t1ph43zc", "d": "أيام", "g": "السلة وصفحة المنتج ونموذج الطلب"}, {"k": "t1mm0b27", "d": "الكمية", "g": "السلة وصفحة المنتج ونموذج الطلب"}, {"k": "t1e0dbwh", "d": "المجموع", "g": "السلة وصفحة المنتج ونموذج الطلب"}, {"k": "tqn3qxs", "d": "أضف إلى السلة", "g": "السلة وصفحة المنتج ونموذج الطلب"}, {"k": "t1prepa", "d": "اطلب الآن", "g": "السلة وصفحة المنتج ونموذج الطلب"}, {"k": "tzgivc6", "d": "الحجم", "g": "السلة وصفحة المنتج ونموذج الطلب"}, {"k": "t9m9cf9", "d": "عدد القطع", "g": "السلة وصفحة المنتج ونموذج الطلب"}, {"k": "t1h1mt3v", "d": "متابعة التسوق", "g": "السلة وصفحة المنتج ونموذج الطلب"}, {"k": "txlemaq", "d": "السلة فارغة حالياً", "g": "السلة وصفحة المنتج ونموذج الطلب"}, {"k": "t15ph0kx", "d": "تصفح المنتجات", "g": "السلة وصفحة المنتج ونموذج الطلب"}, {"k": "tmx02ru", "d": "لم تضف أي قطعة للمفضلة بعد.", "g": "السلة وصفحة المنتج ونموذج الطلب"}, {"k": "t134xqt1", "d": "اضغط على القلب بجانب السعر لحفظ ما يعجبك.", "g": "السلة وصفحة المنتج ونموذج الطلب"}, {"k": "tdgq6pd", "d": "للسلة", "g": "السلة وصفحة المنتج ونموذج الطلب"}, {"k": "t1xg9sxi", "d": "نوع الطلب", "g": "السلة وصفحة المنتج ونموذج الطلب"}, {"k": "tn2m3t0", "d": "تصميم خاص", "g": "السلة وصفحة المنتج ونموذج الطلب"}, {"k": "tpt1g71", "d": "السعر والمدة", "g": "السلة وصفحة المنتج ونموذج الطلب"}, {"k": "t8naz3r", "d": "نحددها بعد مراجعة تصميمك", "g": "السلة وصفحة المنتج ونموذج الطلب"}, {"k": "t1w3epm8", "d": "السعر النهائي", "g": "السلة وصفحة المنتج ونموذج الطلب"}, {"k": "tdlmco0", "d": "تصميمك الخاص", "g": "السلة وصفحة المنتج ونموذج الطلب"}, {"k": "t1r5x45m", "d": "خطوة أخيرة", "g": "السلة وصفحة المنتج ونموذج الطلب"}, {"k": "tf4lemb", "d": "معلومات الطلب", "g": "السلة وصفحة المنتج ونموذج الطلب"}, {"k": "t16duk29", "d": "الاسم الكامل", "g": "السلة وصفحة المنتج ونموذج الطلب"}, {"k": "teh9c3v", "d": "رقم الهاتف", "g": "السلة وصفحة المنتج ونموذج الطلب"}, {"k": "th6d8c7", "d": "المنطقة", "g": "السلة وصفحة المنتج ونموذج الطلب"}, {"k": "t1gqqspt", "d": "العنوان التفصيلي", "g": "السلة وصفحة المنتج ونموذج الطلب"}, {"k": "t1vq274", "d": "صورة تصميمك", "g": "السلة وصفحة المنتج ونموذج الطلب"}, {"k": "t1qrwrd0", "d": "إضافة صورة (اختياري)", "g": "السلة وصفحة المنتج ونموذج الطلب"}, {"k": "t6ij3cw", "d": "اختر صورة", "g": "السلة وصفحة المنتج ونموذج الطلب"}, {"k": "t158yb4b", "d": "أرسل الطلب على واتساب", "g": "السلة وصفحة المنتج ونموذج الطلب"}, {"k": "t1dwe0m2", "d": "إلغاء", "g": "السلة وصفحة المنتج ونموذج الطلب"}, {"k": "tbif6y7", "d": "تم تجهيز طلبك", "g": "السلة وصفحة المنتج ونموذج الطلب"}, {"k": "ty8tz9q", "d": "فتح واتساب مرة أخرى", "g": "السلة وصفحة المنتج ونموذج الطلب"}, {"k": "tysudiz", "d": "إغلاق", "g": "السلة وصفحة المنتج ونموذج الطلب"}, {"k": "ti2aat2", "d": "أُضيفت إلى السلة ✓", "g": "السلة وصفحة المنتج ونموذج الطلب"}, {"k": "t1bmgmig", "d": "واتساب", "g": "السلة وصفحة المنتج ونموذج الطلب"}, {"k": "tvjfzt2", "d": "اختياري", "g": "السلة وصفحة المنتج ونموذج الطلب"}, {"k": "t1j0n8c2", "d": "صورة تصميمك (مطلوبة)", "g": "السلة وصفحة المنتج ونموذج الطلب"}, {"k": "t1pir2ib", "d": "جاري إرسال طلبك...", "g": "السلة وصفحة المنتج ونموذج الطلب"}, {"k": "txkisdk", "d": "تم الطلب", "g": "السلة وصفحة المنتج ونموذج الطلب"}, {"k": "t1hjp7xk", "d": "وصلنا طلبك يا", "g": "السلة وصفحة المنتج ونموذج الطلب"}, {"k": "tp2dpf4", "d": "وسنتواصل معك قريباً على رقمك لتأكيد التفاصيل.", "g": "السلة وصفحة المنتج ونموذج الطلب"}, {"k": "t5xddmw", "d": "تمام", "g": "السلة وصفحة المنتج ونموذج الطلب"}, {"k": "tg12p47", "d": "اسمك", "g": "السلة وصفحة المنتج ونموذج الطلب"}, {"k": "tv4jzyx", "d": "التقييم", "g": "السلة وصفحة المنتج ونموذج الطلب"}, {"k": "t10gv4if", "d": "رأيك بالسجادة", "g": "السلة وصفحة المنتج ونموذج الطلب"}, {"k": "t7bns46", "d": "إرسال رأيك", "g": "السلة وصفحة المنتج ونموذج الطلب"}, {"k": "t1ipztg8", "d": "جاري الإرسال...", "g": "السلة وصفحة المنتج ونموذج الطلب"}, {"k": "t1vhxq9x", "d": "شكراً لك!", "g": "السلة وصفحة المنتج ونموذج الطلب"}, {"k": "t1wjtsav", "d": "وصل رأيك وسيظهر بعد مراجعته.", "g": "السلة وصفحة المنتج ونموذج الطلب"}];
 (function () {
 'use strict';
 var CFG = window.SJ_CFG || {};
@@ -187,8 +194,8 @@ function prep(file) {
     img.src = url;
   });
 }
-function upload(file, folder) {
-  return prep(file).then(function (p) {
+function upload(file, folder, pre) {
+  return (pre ? Promise.resolve(pre) : prep(file)).then(function (p) {
     var path = folder + '/' + Date.now() + '-' + Math.random().toString(36).slice(2, 8) + '.' + p.ext;
     return sb.storage.from('images').upload(path, p.blob, { contentType: p.type, cacheControl: '31536000' }).then(function (r) {
       if (r.error) throw r.error;
@@ -199,6 +206,79 @@ function upload(file, folder) {
 function rmImg(url) {
   var i = String(url).indexOf('/images/'); if (i < 0) return;
   sb.storage.from('images').remove([decodeURIComponent(String(url).slice(i + 8).split('?')[0])]);
+}
+/* ---------- أداة القص: دائماً مربّعة. الافتراضي = القطعة كاملة بدون قص ---------- */
+function cropFile(file) {
+  return new Promise(function (resolve) {
+    var url = URL.createObjectURL(file), img = new Image();
+    img.onerror = function () { URL.revokeObjectURL(url); resolve(null); };
+    img.onload = function () {
+      var iw = img.width, ih = img.height, S = 380, fit = Math.min(1 / iw, 1 / ih), cover = Math.max(1 / iw, 1 / ih);
+      var bg = '#F2E8D5';
+      var z = 1, ox = 0, oy = 0; /* z: مضاعف فوق مقياس "كاملة" */
+      var cv = h('canvas', { width: S * 2, height: S * 2 }), ctx = cv.getContext('2d');
+      var zr = h('input', { type: 'range', min: 1, max: 6, step: 0.01, value: 1 });
+      function sc() { return fit * z; }
+      function clamp(k) {
+        var w = iw * sc() * k, hh = ih * sc() * k, W = k;
+        var mx = Math.max(0, (w - W) / 2), my = Math.max(0, (hh - W) / 2);
+        ox = Math.max(-mx / k, Math.min(mx / k, ox)); oy = Math.max(-my / k, Math.min(my / k, oy));
+      }
+      function paint(c, size) {
+        var k = size; /* الإحداثيات نسبية: المربّع = 1 */
+        clamp(1);
+        c.clearRect(0, 0, size, size);
+        if (bg !== 'none') { c.fillStyle = bg; c.fillRect(0, 0, size, size); }
+        var w = iw * sc() * size, hh = ih * sc() * size;
+        c.drawImage(img, size / 2 + ox * size - w / 2, size / 2 + oy * size - hh / 2, w, hh);
+      }
+      function draw() { paint(ctx, S * 2); }
+      var ptr = {}, lastD = 0;
+      function pt(e) { var r = cv.getBoundingClientRect(); return { x: (e.clientX - r.left) / r.width, y: (e.clientY - r.top) / r.height }; }
+      cv.onpointerdown = function (e) { cv.setPointerCapture(e.pointerId); ptr[e.pointerId] = pt(e); lastD = 0; cv.style.cursor = 'grabbing'; };
+      cv.onpointermove = function (e) {
+        if (!ptr[e.pointerId]) return; var n = pt(e), o = ptr[e.pointerId], ids = Object.keys(ptr);
+        if (ids.length === 2) {
+          ptr[e.pointerId] = n; var a = ptr[ids[0]], b = ptr[ids[1]], d = Math.hypot(a.x - b.x, a.y - b.y);
+          if (lastD) { z = Math.max(1, Math.min(6, z * d / lastD)); zr.value = z; } lastD = d;
+        } else { ox += n.x - o.x; oy += n.y - o.y; ptr[e.pointerId] = n; }
+        draw();
+      };
+      cv.onpointerup = cv.onpointercancel = function (e) { delete ptr[e.pointerId]; lastD = 0; cv.style.cursor = 'grab'; };
+      cv.onwheel = function (e) { e.preventDefault(); z = Math.max(1, Math.min(6, z * (e.deltaY < 0 ? 1.08 : 1 / 1.08))); zr.value = z; draw(); };
+      zr.oninput = function () { z = +zr.value; draw(); };
+      function setBg(v) { bg = v; draw(); }
+      var done;
+      var mk = h('div', { class: 'mask', style: 'z-index:70' }, h('div', { class: 'modal' }, h('h2', null, 'اقصّ الصورة (مربّعة)'),
+        h('div', { class: 'crop' },
+          h('small', { style: 'opacity:.8;text-align:center' }, 'المربّع هو نفس شكل صورة المنتج في المتجر (مربّع). الافتراضي: القطعة كاملة. اسحب وكبّر لتختار جزءاً.'),
+          cv, zr,
+          h('div', { class: 'tools' },
+            h('button', { type: 'button', class: 'btn sec sm', onclick: function () { z = 1; ox = oy = 0; zr.value = 1; draw(); } }, 'القطعة كاملة'),
+            h('button', { type: 'button', class: 'btn sec sm', onclick: function () { z = Math.min(6, cover / fit); ox = oy = 0; zr.value = z; draw(); } }, 'املأ المربّع'),
+            h('button', { type: 'button', class: 'btn sec sm', onclick: function () { setBg('none'); } }, 'خلفية شفافة'),
+            h('button', { type: 'button', class: 'btn sec sm', onclick: function () { setBg('#F2E8D5'); } }, 'خلفية بيج'),
+            h('button', { type: 'button', class: 'btn sec sm', onclick: function () { setBg('#ffffff'); } }, 'خلفية بيضاء')),
+          h('div', { class: 'acts' },
+            h('button', { type: 'button', class: 'btn', onclick: function () {
+              var o = document.createElement('canvas'); o.width = o.height = 1200; paint(o.getContext('2d'), 1200);
+              var isPng = bg === 'none';
+              o.toBlob(function (b) { finish(b ? { blob: b, ext: isPng ? 'png' : 'jpg', type: isPng ? 'image/png' : 'image/jpeg' } : null); }, isPng ? 'image/png' : 'image/jpeg', 0.9);
+            } }, 'استخدام'),
+            h('button', { type: 'button', class: 'btn sec', onclick: function () { finish(null); } }, 'تخطي هذه الصورة')))));
+      function finish(r) { mk.remove(); URL.revokeObjectURL(url); resolve(r); }
+      document.body.appendChild(mk); draw();
+    };
+    img.src = url;
+  });
+}
+var PRE_DEF = [{ l: 'صغير (10×30 سم)', p: 15, a: 10, d: 5 }, { l: 'كبير (16×40 سم)', p: 20, a: 15, d: 5 }];
+function getPre(cb) {
+  sb.from('site_texts').select('key,value').in('key', ['cfg_sizes']).then(function (r) {
+    var out = PRE_DEF;
+    try { var a = JSON.parse(((r.data || [])[0] || {}).value); if (Array.isArray(a) && a.length) out = a; } catch (e) {}
+    cb(out);
+  });
 }
 function pickFiles(multi, cb) {
   var f = h('input', { type: 'file', accept: 'image/png,image/jpeg,image/webp', multiple: multi, class: 'hide', onchange: function () { cb(Array.prototype.slice.call(f.files)); f.remove(); } });
@@ -366,10 +446,11 @@ function viewProducts() {
     var rows = products.filter(function (p) { return pf === 'all' || p.cat === pf; });
     if (!rows.length) list.appendChild(h('div', { class: 'empty' }, 'لا توجد منتجات هنا. اضغط «منتج جديد».'));
     rows.forEach(function (p) {
-      var pr = (p.sizes || []).map(function (z) { return num(z.p); }), lo = Math.min.apply(null, pr), hi = Math.max.apply(null, pr);
+      var gm = (p.sizes || []).filter(function (z) { return z && z.g; })[0], gl = { s: 'صغير', l: 'كبير', b: 'الحجمين' }[gm ? gm.g : 's'];
+      var pr = (p.sizes || []).filter(function (z) { return z && !z.g; }).map(function (z) { return num(z.a) > 0 ? num(z.a) : num(z.p); }).filter(function (v) { return v > 0; }), lo = Math.min.apply(null, pr), hi = Math.max.apply(null, pr);
       list.appendChild(h('div', { class: 'row' + (p.active ? '' : ' off') },
         (p.imgs && p.imgs[0]) ? h('img', { class: 'th', src: p.imgs[0], alt: '' }) : h('div', { class: 'th' }, 'بدون صورة'),
-        h('div', { class: 'tx' }, h('b', null, p.name), h('small', null, CATS[p.cat] + ' · ' + (pr.length ? (lo === hi ? lo : lo + '–' + hi) + ' د.أ' : 'بدون سعر') + (p.disc ? ' · خصم ' + p.disc + '%' : '') + (p.active ? '' : ' · مخفي'))),
+        h('div', { class: 'tx' }, h('b', null, p.name), h('small', null, CATS[p.cat] + (p.cat === 'kb' ? ' · ' + gl : '') + ' · ' + (pr.length ? 'أسعار خاصة: ' + (lo === hi ? lo : lo + '–' + hi) + ' د.أ' : 'الأسعار الثابتة') + (p.active ? '' : ' · مخفي'))),
         h('div', { class: 'acts' },
           h('button', { class: 'btn sec sm', onclick: function () { editProduct(p); } }, 'تعديل'),
           h('button', { class: 'btn sec sm', onclick: function () { sb.from('products').update({ active: !p.active }).eq('id', p.id).then(function (r) { r.error ? fail(r.error) : viewProducts(); }); } }, p.active ? 'إخفاء' : 'إظهار'),
@@ -395,48 +476,58 @@ function imgGrid(arr, folder, onChange, multi) {
     });
     if (multi || !arr.length) box.appendChild(h('button', { type: 'button', class: 'up', onclick: function () {
       pickFiles(multi, function (files) {
-        toast('جارٍ الرفع...');
-        files.reduce(function (p, f) { return p.then(function () { return upload(f, folder).then(function (u) { arr.push(u); draw(); }); }); }, Promise.resolve()).then(function () { toast('تم الرفع'); }).catch(fail);
+        files.reduce(function (p, f) { return p.then(function () { return cropFile(f).then(function (pre) { if (!pre) return; toast('جارٍ الرفع...'); return upload(f, folder, pre).then(function (u) { arr.push(u); draw(); }); }); }); }, Promise.resolve()).then(function () { toast('تم'); }).catch(fail);
       });
     } }, '+ صورة'));
   }
   draw(); return box;
 }
 function editProduct(p) {
-  var isNew = !p; p = p || { cat: pf !== 'all' ? pf : 'kb', name: '', disc: 0, sizes: [{ l: 'صغير', p: '', d: 5 }, { l: 'وسط', p: '', d: 7 }, { l: 'كبير', p: '', d: 10 }], imgs: [], active: true, sort: 0 };
+  var isNew = !p; p = p || { cat: pf !== 'all' ? pf : 'kb', name: '', disc: 0, sizes: [], imgs: [], active: true, sort: 0 };
   var imgs = (p.imgs || []).slice(), removed = [];
   var name = h('input', { value: p.name, maxlength: 120 });
   var cat = h('select', null, Object.keys(CATS).map(function (k) { return h('option', { value: k, selected: p.cat === k }, CATS[k]); }));
-  var disc = h('input', { type: 'number', min: 0, max: 90, inputmode: 'numeric', value: p.disc });
   var sort = h('input', { type: 'number', inputmode: 'numeric', value: p.sort || 0 });
   var active = h('input', { type: 'checkbox', checked: !!p.active, style: 'width:22px;min-height:22px' });
-  var szBox = h('div', { style: 'display:flex;flex-direction:column;gap:8px' }), sizes = (p.sizes || []).map(function (z) { return { l: z.l, p: z.p, d: z.d }; });
+  var gm0 = (p.sizes || []).filter(function (z) { return z && z.g; })[0], grp = gm0 && gm0.g ? gm0.g : 's';
+  p.sizes = (p.sizes || []).filter(function (z) { return z && !z.g; });
+  var PRE = PRE_DEF, custom = !!(p.sizes && p.sizes.length);
+  var grpSel = h('select', null, [['s', 'حجم صغير'], ['l', 'حجم كبير'], ['b', 'الحجمين معاً']].map(function (o) { return h('option', { value: o[0], selected: grp === o[0] }, o[1]); }));
+  var grpBox = h('label', { class: 'fld' }, h('span', null, 'يظهر ضمن (سجاد الكيبورد فقط)'), grpSel);
+  function showGrp() { grpBox.style.display = cat.value === 'kb' ? '' : 'none'; }
+  cat.onchange = showGrp; showGrp();
+  var preTxt = h('small', { style: 'opacity:.85' }), szBox = h('div', { style: 'display:flex;flex-direction:column;gap:8px' });
+  var sizes = (p.sizes || []).map(function (z) { return { l: z.l, p: z.p, a: z.a == null ? '' : z.a, d: z.d }; });
+  var cust = h('input', { type: 'checkbox', checked: custom, style: 'width:22px;min-height:22px', onchange: function () { custom = cust.checked; if (custom && !sizes.length) sizes = PRE.map(function (z) { return { l: z.l, p: z.p, a: z.a, d: z.d }; }); drawSz(); } });
   function drawSz() {
     szBox.textContent = '';
+    preTxt.textContent = custom ? '' : 'الأسعار الثابتة: ' + PRE.map(function (z) { return z.l + ' — قبل ' + z.p + ' / بعد ' + z.a + ' د.أ — ' + z.d + ' أيام'; }).join('  |  ');
+    if (!custom) return;
     sizes.forEach(function (z, i) {
-      szBox.appendChild(h('div', { class: 'sz' },
-        h('label', { class: 'fld' }, h('span', null, 'الحجم'), h('input', { value: z.l, oninput: function (e) { z.l = e.target.value; } })),
-        h('label', { class: 'fld' }, h('span', null, 'السعر (د.أ)'), h('input', { type: 'number', step: '0.5', min: 0, inputmode: 'decimal', value: z.p, oninput: function (e) { z.p = e.target.value; } })),
-        h('label', { class: 'fld' }, h('span', null, 'أيام التنفيذ'), h('input', { type: 'number', min: 0, inputmode: 'numeric', value: z.d, oninput: function (e) { z.d = e.target.value; } })),
+      szBox.appendChild(h('div', { class: 'sz4' },
+        h('label', { class: 'fld' }, h('span', null, 'الاسم'), h('input', { value: z.l, oninput: function (e) { z.l = e.target.value; } })),
+        h('label', { class: 'fld' }, h('span', null, 'السعر قبل'), h('input', { type: 'number', step: '0.5', min: 0, inputmode: 'decimal', value: z.p, oninput: function (e) { z.p = e.target.value; } })),
+        h('label', { class: 'fld' }, h('span', null, 'السعر بعد'), h('input', { type: 'number', step: '0.5', min: 0, inputmode: 'decimal', value: z.a, oninput: function (e) { z.a = e.target.value; } })),
+        h('label', { class: 'fld' }, h('span', null, 'المدة (أيام)'), h('input', { type: 'number', min: 0, inputmode: 'numeric', value: z.d, oninput: function (e) { z.d = e.target.value; } })),
         h('button', { type: 'button', class: 'btn red sm', onclick: function () { sizes.splice(i, 1); drawSz(); } }, '×')));
     });
-    szBox.appendChild(h('button', { type: 'button', class: 'btn sec sm', style: 'align-self:flex-start', onclick: function () { sizes.push({ l: '', p: '', d: 7 }); drawSz(); } }, '+ حجم'));
+    szBox.appendChild(h('button', { type: 'button', class: 'btn sec sm', style: 'align-self:flex-start', onclick: function () { sizes.push({ l: '', p: '', a: '', d: 5 }); drawSz(); } }, '+ حجم'));
   }
-  drawSz();
+  drawSz(); getPre(function (x) { PRE = x; drawSz(); });
   var save = h('button', { class: 'btn', type: 'button' }, 'حفظ');
   var m = modal(isNew ? 'منتج جديد' : 'تعديل المنتج', h('div', { style: 'display:flex;flex-direction:column;gap:14px' },
     h('label', { class: 'fld' }, h('span', null, 'اسم القطعة'), name),
-    h('div', { class: 'g2' }, h('label', { class: 'fld' }, h('span', null, 'القسم'), cat), h('label', { class: 'fld' }, h('span', null, 'نسبة الخصم %  (0 = بدون خصم)'), disc)),
-    h('div', { class: 'fld' }, h('span', null, 'الأحجام والأسعار (كل حجم له سعر ومدة تنفيذ)'), szBox),
+    h('div', { class: 'g2' }, h('label', { class: 'fld' }, h('span', null, 'القسم'), cat), grpBox),
+    h('div', { class: 'fld' }, h('label', { style: 'display:flex;gap:10px;align-items:center' }, cust, h('span', null, 'أسعار خاصة بهذه القطعة (غير الثابتة)')), preTxt, szBox),
     h('div', { class: 'fld' }, h('span', null, 'الصور (الأولى تظهر على البطاقة). يفضّل PNG بخلفية شفافة'), imgGrid(imgs, 'products', function (u) { removed.push(u); }, true)),
     h('div', { class: 'g2' }, h('label', { class: 'fld' }, h('span', null, 'الترتيب (الأصغر أولاً)'), sort), h('label', { class: 'fld' }, h('span', null, 'ظاهر في المتجر'), active)),
     h('div', { class: 'acts' }, save, h('button', { class: 'btn sec', type: 'button', onclick: function () { m.remove(); } }, 'إلغاء'))));
   save.onclick = function () {
     var nm = name.value.trim();
-    var sz = sizes.map(function (z) { return { l: String(z.l).trim(), p: num(z.p), d: Math.round(num(z.d)) }; }).filter(function (z) { return z.l && z.p > 0; });
+    var sz = custom ? sizes.map(function (z) { var pb = num(z.p), pa = num(z.a); return { l: String(z.l).trim(), p: pb || pa, a: pa || pb, d: Math.round(num(z.d)) }; }).filter(function (z) { return z.l && z.p > 0; }) : [];
     if (!nm) return toast('اكتب اسم القطعة');
-    if (!sz.length) return toast('أضف حجماً واحداً على الأقل بسعر');
-    var row = { name: nm, cat: cat.value, disc: Math.min(90, Math.max(0, Math.round(num(disc.value)))), sizes: sz, imgs: imgs, active: active.checked, sort: Math.round(num(sort.value)) };
+    if (custom && !sz.length) return toast('أضف حجماً واحداً على الأقل بسعر، أو ألغِ الأسعار الخاصة');
+    var row = { name: nm, cat: cat.value, disc: 0, sizes: sz.concat([{ g: cat.value === 'kb' ? grpSel.value : 's' }]), imgs: imgs, active: active.checked, sort: Math.round(num(sort.value)) };
     save.disabled = true;
     var q = isNew ? sb.from('products').insert(row) : sb.from('products').update(row).eq('id', p.id);
     q.then(function (r) {
@@ -613,6 +704,27 @@ function viewSettings() {
       });
     } }, 'حفظ')));
   sb.from('site_texts').select('key,value').in('key', ['cfg_wa', 'cfg_ig', 'cfg_fb']).then(function (r) { (r.data || []).forEach(function (x) { ({ cfg_wa: wa, cfg_ig: ig, cfg_fb: fb })[x.key].value = x.value; }); });
+  var preRows = PRE_DEF.map(function (z) { return { l: z.l, p: z.p, a: z.a, d: z.d }; }), preBox = h('div', { style: 'display:flex;flex-direction:column;gap:10px' });
+  function drawPre() {
+    preBox.textContent = '';
+    preRows.forEach(function (z) {
+      preBox.appendChild(h('div', { class: 'sz4', style: 'grid-template-columns:1.4fr 1fr 1fr .8fr' },
+        h('label', { class: 'fld' }, h('span', null, 'الاسم'), h('input', { value: z.l, oninput: function (e) { z.l = e.target.value; } })),
+        h('label', { class: 'fld' }, h('span', null, 'السعر قبل'), h('input', { type: 'number', step: '0.5', min: 0, inputmode: 'decimal', value: z.p, oninput: function (e) { z.p = e.target.value; } })),
+        h('label', { class: 'fld' }, h('span', null, 'السعر بعد'), h('input', { type: 'number', step: '0.5', min: 0, inputmode: 'decimal', value: z.a, oninput: function (e) { z.a = e.target.value; } })),
+        h('label', { class: 'fld' }, h('span', null, 'المدة (أيام)'), h('input', { type: 'number', min: 0, inputmode: 'numeric', value: z.d, oninput: function (e) { z.d = e.target.value; } }))));
+    });
+  }
+  drawPre(); getPre(function (x) { preRows = x.map(function (z) { return { l: z.l, p: z.p, a: z.a, d: z.d }; }); drawPre(); });
+  body.appendChild(h('div', { class: 'card', style: 'width:100%;margin-bottom:14px' },
+    h('h3', { style: 'color:var(--orange);font-size:20px' }, 'الأسعار الثابتة للقطع'),
+    h('small', { style: 'opacity:.85' }, 'تُطبَّق تلقائياً على أي قطعة جديدة. تغيير هنا يغيّر كل القطع التي بدون أسعار خاصة.'),
+    preBox,
+    h('button', { class: 'btn', onclick: function () {
+      var v = preRows.map(function (z) { var pb = num(z.p), pa = num(z.a); return { l: String(z.l).trim(), p: pb || pa, a: pa || pb, d: Math.round(num(z.d)) }; }).filter(function (z) { return z.l && z.p > 0; });
+      if (!v.length) return toast('أدخل سعراً واحداً على الأقل');
+      sb.from('site_texts').upsert({ key: 'cfg_sizes', value: JSON.stringify(v) }).then(function (r) { r.error ? fail(r.error) : toast('تم حفظ الأسعار'); });
+    } }, 'حفظ الأسعار')));
   body.appendChild(h('div', { class: 'card', style: 'width:100%' },
     h('h3', { style: 'color:var(--orange);font-size:20px' }, 'تغيير كلمة السر'),
     h('label', { class: 'fld' }, h('span', null, 'كلمة السر الجديدة (١٠ أحرف فأكثر)'), p1), h('label', { class: 'fld' }, h('span', null, 'أعدها'), p2),
