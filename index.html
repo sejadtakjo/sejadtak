@@ -179,14 +179,11 @@ a{color:#F29A52}a:hover{color:#F8B77E}
 
 /* ===== بطاقات المنتجات ===== */
 .sq{position:relative;cursor:pointer}
-.tile .sq[data-id]{padding:13px;box-shadow:inset 0 0 0 1px rgba(43,35,18,.14)}
-.tile .sq[data-id]::after{content:'';position:absolute;inset:5px;border-radius:16px;pointer-events:none;
- background:repeating-linear-gradient(90deg,#E8863A 0 10px,transparent 10px 20px) 0 0/100% 2px no-repeat,
- repeating-linear-gradient(90deg,#E8863A 0 10px,transparent 10px 20px) 0 100%/100% 2px no-repeat,
- repeating-linear-gradient(0deg,#E8863A 0 10px,transparent 10px 20px) 0 0/2px 100% no-repeat,
- repeating-linear-gradient(0deg,#E8863A 0 10px,transparent 10px 20px) 100% 0/2px 100% no-repeat;
- opacity:.75;animation:ants 1.4s linear infinite}
-@keyframes ants{to{background-position:20px 0,-20px 100%,0 -20px,100% 20px}}
+.tile .sq[data-id]{padding:7px;background:transparent;border-radius:20px}
+.tile .sq[data-id] .pimg{border-radius:14px;background:rgba(0,0,0,.28)}
+.tile .sq[data-id] .ants{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible}
+.tile .sq[data-id] .ants rect{fill:none;stroke:#E8863A;stroke-width:2;stroke-dasharray:10 10;animation:ants 1.2s linear infinite}
+@keyframes ants{to{stroke-dashoffset:-20}}
 .szsel{display:inline-flex;gap:8px}
 .szsel button{font:inherit;font-weight:700;font-size:16px;cursor:pointer;padding:8px 18px;border-radius:12px;border:1.5px solid rgba(242,232,213,.38);background:rgba(242,232,213,.1);color:#E4D6B8;transition:background .2s,color .2s,border-color .2s}
 .szsel button.on{background:#E8863A;border-color:#E8863A;color:#2B2312}
@@ -1078,6 +1075,11 @@ class Component extends DCLogic {
       { id: 'floor', title: T('سجاد أرضيات'), sizes: [{ l: 'صغير', p: 45, d: 7 }, { l: 'وسط', p: 75, d: 10 }, { l: 'كبير', p: 110, d: 14 }] }
     ];
     const DISC = [0, 10, 15, 20];
+    const SHIP = (() => {
+      let o = { in: 1.5, out: 2 };
+      try { const j = JSON.parse(TXC.cfg_ship); const a = Number(j.in), b = Number(j.out); if (isFinite(a) && a >= 0) o.in = a; if (isFinite(b) && b >= 0) o.out = b; } catch (e) {}
+      return o;
+    })();
     /* الأسعار الثابتة لكل القطع (تتغير من لوحة الأدمن > الإعدادات). القطعة التي لها أسعار خاصة تتجاوزها. */
     const PRE_DEF = [{ l: 'صغير (10×30 سم)', p: 15, a: 10, d: 5 }, { l: 'كبير (16×40 سم)', p: 20, a: 15, d: 5 }];
     const PRE = (() => {
@@ -1136,7 +1138,7 @@ class Component extends DCLogic {
       const on = fav.indexOf(p.id) > -1;
       return '<div class="tile">' +
         '<div class="sq" data-act="open" data-id="' + p.id + '" data-si="' + si + '" role="button" tabindex="0" aria-label="' + p.name + '">' +
-        (hasD(p, si) ? '<span class="dsc">' + T('خصم') + '</span>' : '') + media(p, 0) + '</div>' +
+        '<svg class="ants" aria-hidden="true"><rect x="1" y="1" rx="19" ry="19" style="width:calc(100% - 2px);height:calc(100% - 2px)"/></svg>' + (hasD(p, si) ? '<span class="dsc">' + T('خصم') + '</span>' : '') + media(p, 0) + '</div>' +
         '<div class="nmbox" data-act="open" data-id="' + p.id + '" data-si="' + si + '">' + p.name + '</div>' +
         '<div class="prow"><div class="pr2">' +
         (hasD(p, si) ? '<s class="pold">' + fmt(s.p) + ' د.أ</s>' : '') +
@@ -1324,17 +1326,23 @@ class Component extends DCLogic {
       a.href = url; a.target = '_blank'; a.rel = 'noopener';
       doc.body.appendChild(a); a.click(); a.remove();
     };
+    const shipFee = () => ord.zone === 'in' ? SHIP.in : ord.zone === 'out' ? SHIP.out : 0;
+    const updShip = () => {
+      const a = doc.getElementById('oship'), b = doc.getElementById('otot');
+      if (a) a.innerHTML = '<span>' + T('التوصيل') + (ord.zone ? ' (' + (ord.zone === 'in' ? T('داخل عمان') : T('خارج عمان')) + ')' : '') + '</span><b>' + (ord.zone ? fmt(shipFee()) + ' د.أ' : T('اختر المنطقة')) + '</b>';
+      if (b) b.innerHTML = '<span>' + T('السعر النهائي') + '</span><b>' + fmt(itemsTotal(ord.items) + shipFee()) + ' د.أ</b>';
+    };
     const renderO = () => {
       const custom = ord.mode === 'custom';
       let list;
       if (custom) {
-        list = '<div class="sum"><div class="srow"><span>' + T('نوع الطلب') + '</span><b>' + T('تصميم خاص') + '</b></div><div class="srow"><span>' + T('السعر والمدة') + '</span><b>' + T('نحددها بعد مراجعة تصميمك') + '</b></div></div>';
+        list = '<div class="sum"><div class="srow"><span>' + T('نوع الطلب') + '</span><b>' + T('تصميم خاص') + '</b></div><div class="srow"><span>' + T('السعر والمدة') + '</span><b>' + T('نحددها بعد مراجعة تصميمك') + '</b></div><div class="srow" id="oship"></div></div>';
       } else {
         list = '<div class="sum">' + ord.items.map(it => {
           const p = PM[it.id], z = p.sizes[it.si];
           return '<div class="srow"><span>' + p.name + ' · ' + T('الحجم') + ': ' + z.l + ' · ' + T('الكمية') + ': ' + it.q + '</span><b>' + fmt(price(p, it.si) * it.q) + ' د.أ</b></div>';
         }).join('') + '<div class="srow"><span>' + T('مدة التنفيذ') + '</span><b>' + itemsDays(ord.items) + ' ' + T('أيام') + '</b></div>' +
-          '<div class="srow big"><span>' + T('السعر النهائي') + '</span><b>' + fmt(itemsTotal(ord.items)) + ' د.أ</b></div></div>';
+          '<div class="srow" id="oship"></div><div class="srow big" id="otot"></div></div>';
       }
       pn('O').innerHTML = stitchBox +
         '<div class="ohd"><svg class="orug" viewBox="0 0 84 64" aria-hidden="true">' +
@@ -1348,14 +1356,17 @@ class Component extends DCLogic {
         list +
         '<div class="fgrid">' +
         '<label class="fld full"><span>' + T('الاسم الكامل') + '</span><input type="text" id="ofn" autocomplete="name" placeholder="مثال: محمد أحمد"></label>' +
-        '<label class="fld"><span>' + T('رقم الهاتف') + '</span><input type="tel" inputmode="tel" id="oph" autocomplete="tel" placeholder="مثال: 0791234567" dir="ltr" style="text-align:right"></label>' +
-        '<label class="fld"><span>' + T('المنطقة') + '</span><input type="text" id="oar" autocomplete="address-level2" placeholder="مثال: عمّان، الجبيهة"></label>' +
-        '<label class="fld full"><span>' + T('العنوان التفصيلي') + ' <small style="opacity:.7">(' + T('اختياري') + ')</small></span><textarea id="oad" placeholder="الشارع، رقم البناية، أقرب معلم"></textarea></label>' +
-        '<div class="fld full"><span>' + (custom ? T('صورة تصميمك (مطلوبة)') : T('إضافة صورة (اختياري)')) + '</span><div class="upl">' +
+        '<label class="fld full"><span>' + T('رقم الهاتف') + '</span><input type="tel" inputmode="tel" id="oph" autocomplete="tel" placeholder="مثال: 0791234567" dir="ltr" style="text-align:right"></label>' +
+        '<div class="fld full"><span>' + T('المنطقة') + '</span><div class="szsel" role="group" aria-label="المنطقة">' +
+        '<button type="button" data-act="zone" data-v="in" aria-pressed="false">' + T('داخل عمان') + ' · ' + fmt(SHIP.in) + ' د.أ</button>' +
+        '<button type="button" data-act="zone" data-v="out" aria-pressed="false">' + T('خارج عمان') + ' · ' + fmt(SHIP.out) + ' د.أ</button></div></div>' +
+        '<label class="fld full"><span>' + T('العنوان بالتفصيل') + '</span><input type="text" id="oad" autocomplete="street-address" placeholder="مثال: عمان، الجبيهة"></label>' +
+        (custom ? '<div class="fld full"><span>' + T('صورة تصميمك (مطلوبة)') + '</span><div class="upl">' +
         '<input type="file" id="ofile" accept="image/*"><label for="ofile" class="bt sec">' + I.cam + ' ' + T('اختر صورة') + '</label>' +
-        '<img class="oprev" id="oprev" alt="معاينة الصورة"><span class="fname" id="ofname"></span></div></div></div>' +
+        '<img class="oprev" id="oprev" alt="معاينة الصورة"><span class="fname" id="ofname"></span></div></div>' : '') + '</div>' +
         '<div class="oerr" id="oerr" role="alert"></div>' +
         '<div class="pbtns"><button type="button" class="bt pri" data-act="send">' + T('اطلب الآن') + '</button><button type="button" class="bt sec" data-act="close">' + T('إلغاء') + '</button></div>';
+      updShip();
     };
     /* ---------- أضف رأيك ---------- */
     let rv = { file: null, url: null, stars: 5 };
@@ -1396,7 +1407,7 @@ class Component extends DCLogic {
     };
     const openOrder = (items, mode) => {
       if (ord.url) { try { URL.revokeObjectURL(ord.url); } catch (e) {} }
-      ord = { items: items, mode: mode, file: null, url: null };
+      ord = { items: items, mode: mode, file: null, url: null, zone: '' };
       renderO();
       openOv('O');
     };
@@ -1424,19 +1435,20 @@ class Component extends DCLogic {
     };
     const send = () => {
       const g = id => ((doc.getElementById(id) || {}).value || '').trim();
-      const nm = g('ofn'), ph = g('oph'), ar = g('oar'), ad = g('oad');
+      const nm = g('ofn'), ph = g('oph'), ad = g('oad'), ar = ord.zone === 'in' ? 'عمان' : ord.zone === 'out' ? 'خارج عمان' : '';
       const err = doc.getElementById('oerr');
       const custom = ord.mode === 'custom';
       const bad = !nm || nm.split(/\s+/).length < 2 ? 'يرجى كتابة الاسم الكامل (الاسم الأول والأخير).'
         : ph.replace(/[^0-9٠-٩]/g, '').length < 8 ? 'يرجى كتابة رقم هاتف صحيح.'
-        : !ar ? 'يرجى كتابة المنطقة (مثال: عمّان، الجبيهة).'
+        : !ar ? 'يرجى اختيار المنطقة: داخل عمان أو خارج عمان.'
+        : ad.length < 3 ? 'يرجى كتابة العنوان بالتفصيل (مثال: عمان، الجبيهة).'
         : (custom && !ord.file) ? 'يرجى إرفاق صورة تصميمك.' : '';
       if (bad) {
         err.textContent = bad;
         err.classList.remove('shk'); void err.offsetWidth; err.classList.add('shk');
         return;
       }
-      const L = ['طلب جديد من متجر سجادتك 🧶', '', 'الاسم: ' + nm, 'رقم الهاتف: ' + ph, 'المنطقة: ' + ar, 'العنوان: ' + ad, ''];
+      const L = ['طلب جديد من متجر سجادتك 🧶', '', 'الاسم: ' + nm, 'رقم الهاتف: ' + ph, 'المنطقة: ' + ar + ' (توصيل ' + fmt(shipFee()) + ' د.أ)', 'العنوان: ' + ad, ''];
       if (custom) {
         L.push('نوع الطلب: تصميم خاص');
       } else {
@@ -1445,10 +1457,10 @@ class Component extends DCLogic {
           const p = PM[it.id], z = p.sizes[it.si];
           L.push((i + 1) + ') ' + p.raw, '   الحجم: ' + z.raw, '   الكمية: ' + it.q, '   السعر: ' + fmt(price(p, it.si) * it.q) + ' د.أ');
         });
-        L.push('', 'السعر النهائي: ' + fmt(itemsTotal(ord.items)) + ' د.أ', 'مدة التنفيذ: ' + itemsDays(ord.items) + ' أيام');
+        L.push('', 'التوصيل: ' + fmt(shipFee()) + ' د.أ', 'السعر النهائي: ' + fmt(itemsTotal(ord.items) + shipFee()) + ' د.أ', 'مدة التنفيذ: ' + itemsDays(ord.items) + ' أيام');
       }
       if (ord.file) L.push('', cfgOn ? 'صورة التصميم مرفقة بالطلب في الموقع 📎' : 'سأرفق صورة التصميم في المحادثة 📎');
-      if (cfgOn) { submit({ name: nm, phone: ph, area: ar, address: ad, mode: ord.mode, items: custom ? [] : ord.items.map(it => ({ name: PM[it.id].raw, size: PM[it.id].sizes[it.si].raw, qty: it.q, price: price(PM[it.id], it.si) * it.q })), total: custom ? 0 : itemsTotal(ord.items), days: custom ? 0 : itemsDays(ord.items) }, custom, L); return; }
+      if (cfgOn) { submit({ name: nm, phone: ph, area: ar + ' (توصيل ' + fmt(shipFee()) + ' د.أ)', address: ad, mode: ord.mode, items: custom ? [] : ord.items.map(it => ({ name: PM[it.id].raw, size: PM[it.id].sizes[it.si].raw, qty: it.q, price: price(PM[it.id], it.si) * it.q })), total: custom ? 0 : itemsTotal(ord.items) + shipFee(), days: custom ? 0 : itemsDays(ord.items) }, custom, L); return; }
       err.textContent = 'الطلب غير متاح حالياً، يرجى المحاولة لاحقاً.';
     };
 
@@ -1483,6 +1495,11 @@ class Component extends DCLogic {
       const nImg = ps.id ? (PM[ps.id].imgs.length || 3) : 3;
       switch (a) {
         case 'open': openProduct(id, +t.getAttribute('data-si') || 0); break;
+        case 'zone': {
+          ord.zone = t.getAttribute('data-v') === 'out' ? 'out' : 'in';
+          $$('[data-act="zone"]').forEach(b => { const on = b.getAttribute('data-v') === ord.zone; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on); });
+          updShip(); break;
+        }
         case 'kbsz': {
           kbSz = t.getAttribute('data-v') === 'l' ? 'l' : 's';
           $$('[data-act="kbsz"]').forEach(b => { const on = b.getAttribute('data-v') === kbSz; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on); });
