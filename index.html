@@ -179,6 +179,17 @@ a{color:#F29A52}a:hover{color:#F8B77E}
 
 /* ===== بطاقات المنتجات ===== */
 .sq{position:relative;cursor:pointer}
+.tile .sq[data-id]{padding:13px;box-shadow:inset 0 0 0 1px rgba(43,35,18,.14)}
+.tile .sq[data-id]::after{content:'';position:absolute;inset:5px;border-radius:16px;pointer-events:none;
+ background:repeating-linear-gradient(90deg,#E8863A 0 10px,transparent 10px 20px) 0 0/100% 2px no-repeat,
+ repeating-linear-gradient(90deg,#E8863A 0 10px,transparent 10px 20px) 0 100%/100% 2px no-repeat,
+ repeating-linear-gradient(0deg,#E8863A 0 10px,transparent 10px 20px) 0 0/2px 100% no-repeat,
+ repeating-linear-gradient(0deg,#E8863A 0 10px,transparent 10px 20px) 100% 0/2px 100% no-repeat;
+ opacity:.75;animation:ants 1.4s linear infinite}
+@keyframes ants{to{background-position:20px 0,-20px 100%,0 -20px,100% 20px}}
+.szsel{display:inline-flex;gap:8px}
+.szsel button{font:inherit;font-weight:700;font-size:16px;cursor:pointer;padding:8px 18px;border-radius:12px;border:1.5px solid rgba(242,232,213,.38);background:rgba(242,232,213,.1);color:#E4D6B8;transition:background .2s,color .2s,border-color .2s}
+.szsel button.on{background:#E8863A;border-color:#E8863A;color:#2B2312}
 .pimg{width:100%;height:100%;object-fit:contain;border-radius:14px;display:block}
 .dsc{position:absolute;top:12px;inset-inline-start:12px;z-index:2;background:#E8863A;color:#2B2312;font-weight:700;font-size:15px;line-height:1;padding:7px 11px;border-radius:999px;transform:rotate(-6deg);box-shadow:0 4px 10px rgba(0,0,0,.25)}
 .dsc.big{font-size:18px;padding:9px 14px;top:18px;inset-inline-start:18px}
@@ -634,13 +645,13 @@ html body *{font-weight:400!important}
   </section>
 
   <!-- شريط متحرك -->
-  <div class="lay" id="tick" dir="ltr" style="background:#E8863A;color:#2B2312;overflow:hidden;padding:18px 0" aria-hidden="true">
-    <div class="marq2" dir="ltr" style="display:flex;width:max-content;font-family:'Cairo',sans-serif;font-weight:700;font-size:30px;line-height:1">
-      <div dir="rtl" style="display:flex;align-items:center;gap:32px;padding-inline:16px">
-        <span data-t="t1nr0utr">تصميمك</span><svg width="18" height="18" viewBox="0 0 14 14"><path d="M7 0L14 7L7 14L0 7Z" fill="#2B2312"/></svg><span data-t="t1ijjv7n">خيوطنا</span><svg width="18" height="18" viewBox="0 0 14 14"><path d="M7 0L14 7L7 14L0 7Z" fill="#2B2312"/></svg><span data-t="t14umzdr">سجادتك</span><svg width="18" height="18" viewBox="0 0 14 14"><path d="M7 0L14 7L7 14L0 7Z" fill="#2B2312"/></svg><span data-t="t1nr0utr">تصميمك</span><svg width="18" height="18" viewBox="0 0 14 14"><path d="M7 0L14 7L7 14L0 7Z" fill="#2B2312"/></svg><span data-t="t1ijjv7n">خيوطنا</span><svg width="18" height="18" viewBox="0 0 14 14"><path d="M7 0L14 7L7 14L0 7Z" fill="#2B2312"/></svg><span data-t="t14umzdr">سجادتك</span><svg width="18" height="18" viewBox="0 0 14 14"><path d="M7 0L14 7L7 14L0 7Z" fill="#2B2312"/></svg><span data-t="t1nr0utr">تصميمك</span><svg width="18" height="18" viewBox="0 0 14 14"><path d="M7 0L14 7L7 14L0 7Z" fill="#2B2312"/></svg><span data-t="t1ijjv7n">خيوطنا</span><svg width="18" height="18" viewBox="0 0 14 14"><path d="M7 0L14 7L7 14L0 7Z" fill="#2B2312"/></svg><span data-t="t14umzdr">سجادتك</span><svg width="18" height="18" viewBox="0 0 14 14"><path d="M7 0L14 7L7 14L0 7Z" fill="#2B2312"/></svg><span data-t="t1nr0utr">تصميمك</span><svg width="18" height="18" viewBox="0 0 14 14"><path d="M7 0L14 7L7 14L0 7Z" fill="#2B2312"/></svg><span data-t="t1ijjv7n">خيوطنا</span><svg width="18" height="18" viewBox="0 0 14 14"><path d="M7 0L14 7L7 14L0 7Z" fill="#2B2312"/></svg><span data-t="t14umzdr">سجادتك</span><svg width="18" height="18" viewBox="0 0 14 14"><path d="M7 0L14 7L7 14L0 7Z" fill="#2B2312"/></svg><span data-t="t1nr0utr">تصميمك</span><svg width="18" height="18" viewBox="0 0 14 14"><path d="M7 0L14 7L7 14L0 7Z" fill="#2B2312"/></svg><span data-t="t1ijjv7n">خيوطنا</span><svg width="18" height="18" viewBox="0 0 14 14"><path d="M7 0L14 7L7 14L0 7Z" fill="#2B2312"/></svg><span data-t="t14umzdr">سجادتك</span><svg width="18" height="18" viewBox="0 0 14 14"><path d="M7 0L14 7L7 14L0 7Z" fill="#2B2312"/></svg><span data-t="t1nr0utr">تصميمك</span><svg width="18" height="18" viewBox="0 0 14 14"><path d="M7 0L14 7L7 14L0 7Z" fill="#2B2312"/></svg><span data-t="t1ijjv7n">خيوطنا</span><svg width="18" height="18" viewBox="0 0 14 14"><path d="M7 0L14 7L7 14L0 7Z" fill="#2B2312"/></svg><span data-t="t14umzdr">سجادتك</span><svg width="18" height="18" viewBox="0 0 14 14"><path d="M7 0L14 7L7 14L0 7Z" fill="#2B2312"/></svg>
+  <div class="lay" id="tick" dir="ltr" style="background:#E8863A;color:#2B2312;overflow:hidden;padding:9px 0" aria-hidden="true">
+    <div class="marq2" dir="ltr" style="display:flex;width:max-content;font-family:'Cairo',sans-serif;font-weight:700;font-size:21px;line-height:1">
+      <div dir="rtl" style="display:flex;align-items:center;gap:24px;padding-inline:16px">
+        <span data-t="tkw1">تصميمك</span><svg width="12" height="12" viewBox="0 0 14 14"><path d="M7 0L14 7L7 14L0 7Z" fill="#2B2312"/></svg><span data-t="tkw2">خيوطنا</span><svg width="12" height="12" viewBox="0 0 14 14"><path d="M7 0L14 7L7 14L0 7Z" fill="#2B2312"/></svg><span data-t="tkw3">سجادتك</span><svg width="12" height="12" viewBox="0 0 14 14"><path d="M7 0L14 7L7 14L0 7Z" fill="#2B2312"/></svg><span data-t="tkw1">تصميمك</span><svg width="12" height="12" viewBox="0 0 14 14"><path d="M7 0L14 7L7 14L0 7Z" fill="#2B2312"/></svg><span data-t="tkw2">خيوطنا</span><svg width="12" height="12" viewBox="0 0 14 14"><path d="M7 0L14 7L7 14L0 7Z" fill="#2B2312"/></svg><span data-t="tkw3">سجادتك</span><svg width="12" height="12" viewBox="0 0 14 14"><path d="M7 0L14 7L7 14L0 7Z" fill="#2B2312"/></svg><span data-t="tkw1">تصميمك</span><svg width="12" height="12" viewBox="0 0 14 14"><path d="M7 0L14 7L7 14L0 7Z" fill="#2B2312"/></svg><span data-t="tkw2">خيوطنا</span><svg width="12" height="12" viewBox="0 0 14 14"><path d="M7 0L14 7L7 14L0 7Z" fill="#2B2312"/></svg><span data-t="tkw3">سجادتك</span><svg width="12" height="12" viewBox="0 0 14 14"><path d="M7 0L14 7L7 14L0 7Z" fill="#2B2312"/></svg><span data-t="tkw1">تصميمك</span><svg width="12" height="12" viewBox="0 0 14 14"><path d="M7 0L14 7L7 14L0 7Z" fill="#2B2312"/></svg><span data-t="tkw2">خيوطنا</span><svg width="12" height="12" viewBox="0 0 14 14"><path d="M7 0L14 7L7 14L0 7Z" fill="#2B2312"/></svg><span data-t="tkw3">سجادتك</span><svg width="12" height="12" viewBox="0 0 14 14"><path d="M7 0L14 7L7 14L0 7Z" fill="#2B2312"/></svg><span data-t="tkw1">تصميمك</span><svg width="12" height="12" viewBox="0 0 14 14"><path d="M7 0L14 7L7 14L0 7Z" fill="#2B2312"/></svg><span data-t="tkw2">خيوطنا</span><svg width="12" height="12" viewBox="0 0 14 14"><path d="M7 0L14 7L7 14L0 7Z" fill="#2B2312"/></svg><span data-t="tkw3">سجادتك</span><svg width="12" height="12" viewBox="0 0 14 14"><path d="M7 0L14 7L7 14L0 7Z" fill="#2B2312"/></svg><span data-t="tkw1">تصميمك</span><svg width="12" height="12" viewBox="0 0 14 14"><path d="M7 0L14 7L7 14L0 7Z" fill="#2B2312"/></svg><span data-t="tkw2">خيوطنا</span><svg width="12" height="12" viewBox="0 0 14 14"><path d="M7 0L14 7L7 14L0 7Z" fill="#2B2312"/></svg><span data-t="tkw3">سجادتك</span><svg width="12" height="12" viewBox="0 0 14 14"><path d="M7 0L14 7L7 14L0 7Z" fill="#2B2312"/></svg>
       </div>
-      <div dir="rtl" style="display:flex;align-items:center;gap:32px;padding-inline:16px">
-        <span data-t="t1nr0utr">تصميمك</span><svg width="18" height="18" viewBox="0 0 14 14"><path d="M7 0L14 7L7 14L0 7Z" fill="#2B2312"/></svg><span data-t="t1ijjv7n">خيوطنا</span><svg width="18" height="18" viewBox="0 0 14 14"><path d="M7 0L14 7L7 14L0 7Z" fill="#2B2312"/></svg><span data-t="t14umzdr">سجادتك</span><svg width="18" height="18" viewBox="0 0 14 14"><path d="M7 0L14 7L7 14L0 7Z" fill="#2B2312"/></svg><span data-t="t1nr0utr">تصميمك</span><svg width="18" height="18" viewBox="0 0 14 14"><path d="M7 0L14 7L7 14L0 7Z" fill="#2B2312"/></svg><span data-t="t1ijjv7n">خيوطنا</span><svg width="18" height="18" viewBox="0 0 14 14"><path d="M7 0L14 7L7 14L0 7Z" fill="#2B2312"/></svg><span data-t="t14umzdr">سجادتك</span><svg width="18" height="18" viewBox="0 0 14 14"><path d="M7 0L14 7L7 14L0 7Z" fill="#2B2312"/></svg><span data-t="t1nr0utr">تصميمك</span><svg width="18" height="18" viewBox="0 0 14 14"><path d="M7 0L14 7L7 14L0 7Z" fill="#2B2312"/></svg><span data-t="t1ijjv7n">خيوطنا</span><svg width="18" height="18" viewBox="0 0 14 14"><path d="M7 0L14 7L7 14L0 7Z" fill="#2B2312"/></svg><span data-t="t14umzdr">سجادتك</span><svg width="18" height="18" viewBox="0 0 14 14"><path d="M7 0L14 7L7 14L0 7Z" fill="#2B2312"/></svg><span data-t="t1nr0utr">تصميمك</span><svg width="18" height="18" viewBox="0 0 14 14"><path d="M7 0L14 7L7 14L0 7Z" fill="#2B2312"/></svg><span data-t="t1ijjv7n">خيوطنا</span><svg width="18" height="18" viewBox="0 0 14 14"><path d="M7 0L14 7L7 14L0 7Z" fill="#2B2312"/></svg><span data-t="t14umzdr">سجادتك</span><svg width="18" height="18" viewBox="0 0 14 14"><path d="M7 0L14 7L7 14L0 7Z" fill="#2B2312"/></svg><span data-t="t1nr0utr">تصميمك</span><svg width="18" height="18" viewBox="0 0 14 14"><path d="M7 0L14 7L7 14L0 7Z" fill="#2B2312"/></svg><span data-t="t1ijjv7n">خيوطنا</span><svg width="18" height="18" viewBox="0 0 14 14"><path d="M7 0L14 7L7 14L0 7Z" fill="#2B2312"/></svg><span data-t="t14umzdr">سجادتك</span><svg width="18" height="18" viewBox="0 0 14 14"><path d="M7 0L14 7L7 14L0 7Z" fill="#2B2312"/></svg><span data-t="t1nr0utr">تصميمك</span><svg width="18" height="18" viewBox="0 0 14 14"><path d="M7 0L14 7L7 14L0 7Z" fill="#2B2312"/></svg><span data-t="t1ijjv7n">خيوطنا</span><svg width="18" height="18" viewBox="0 0 14 14"><path d="M7 0L14 7L7 14L0 7Z" fill="#2B2312"/></svg><span data-t="t14umzdr">سجادتك</span><svg width="18" height="18" viewBox="0 0 14 14"><path d="M7 0L14 7L7 14L0 7Z" fill="#2B2312"/></svg>
+      <div dir="rtl" style="display:flex;align-items:center;gap:24px;padding-inline:16px">
+        <span data-t="tkw1">تصميمك</span><svg width="12" height="12" viewBox="0 0 14 14"><path d="M7 0L14 7L7 14L0 7Z" fill="#2B2312"/></svg><span data-t="tkw2">خيوطنا</span><svg width="12" height="12" viewBox="0 0 14 14"><path d="M7 0L14 7L7 14L0 7Z" fill="#2B2312"/></svg><span data-t="tkw3">سجادتك</span><svg width="12" height="12" viewBox="0 0 14 14"><path d="M7 0L14 7L7 14L0 7Z" fill="#2B2312"/></svg><span data-t="tkw1">تصميمك</span><svg width="12" height="12" viewBox="0 0 14 14"><path d="M7 0L14 7L7 14L0 7Z" fill="#2B2312"/></svg><span data-t="tkw2">خيوطنا</span><svg width="12" height="12" viewBox="0 0 14 14"><path d="M7 0L14 7L7 14L0 7Z" fill="#2B2312"/></svg><span data-t="tkw3">سجادتك</span><svg width="12" height="12" viewBox="0 0 14 14"><path d="M7 0L14 7L7 14L0 7Z" fill="#2B2312"/></svg><span data-t="tkw1">تصميمك</span><svg width="12" height="12" viewBox="0 0 14 14"><path d="M7 0L14 7L7 14L0 7Z" fill="#2B2312"/></svg><span data-t="tkw2">خيوطنا</span><svg width="12" height="12" viewBox="0 0 14 14"><path d="M7 0L14 7L7 14L0 7Z" fill="#2B2312"/></svg><span data-t="tkw3">سجادتك</span><svg width="12" height="12" viewBox="0 0 14 14"><path d="M7 0L14 7L7 14L0 7Z" fill="#2B2312"/></svg><span data-t="tkw1">تصميمك</span><svg width="12" height="12" viewBox="0 0 14 14"><path d="M7 0L14 7L7 14L0 7Z" fill="#2B2312"/></svg><span data-t="tkw2">خيوطنا</span><svg width="12" height="12" viewBox="0 0 14 14"><path d="M7 0L14 7L7 14L0 7Z" fill="#2B2312"/></svg><span data-t="tkw3">سجادتك</span><svg width="12" height="12" viewBox="0 0 14 14"><path d="M7 0L14 7L7 14L0 7Z" fill="#2B2312"/></svg><span data-t="tkw1">تصميمك</span><svg width="12" height="12" viewBox="0 0 14 14"><path d="M7 0L14 7L7 14L0 7Z" fill="#2B2312"/></svg><span data-t="tkw2">خيوطنا</span><svg width="12" height="12" viewBox="0 0 14 14"><path d="M7 0L14 7L7 14L0 7Z" fill="#2B2312"/></svg><span data-t="tkw3">سجادتك</span><svg width="12" height="12" viewBox="0 0 14 14"><path d="M7 0L14 7L7 14L0 7Z" fill="#2B2312"/></svg><span data-t="tkw1">تصميمك</span><svg width="12" height="12" viewBox="0 0 14 14"><path d="M7 0L14 7L7 14L0 7Z" fill="#2B2312"/></svg><span data-t="tkw2">خيوطنا</span><svg width="12" height="12" viewBox="0 0 14 14"><path d="M7 0L14 7L7 14L0 7Z" fill="#2B2312"/></svg><span data-t="tkw3">سجادتك</span><svg width="12" height="12" viewBox="0 0 14 14"><path d="M7 0L14 7L7 14L0 7Z" fill="#2B2312"/></svg>
       </div>
     </div>
   </div>
@@ -677,6 +688,7 @@ html body *{font-weight:400!important}
             <rect class="k" x="100" y="46" width="18" height="12" rx="3" fill="#F2E8D5" style="animation-delay:1.5s"/>
           </svg>
         </div>
+        <div class="szsel sc sr s3" role="group" aria-label="الحجم"><button type="button" class="on" data-act="kbsz" data-v="s" aria-pressed="true" data-t="tjrt3jv">حجم صغير</button><button type="button" data-act="kbsz" data-v="l" aria-pressed="false" data-t="t11v6wpv">حجم كبير</button></div>
         <span style="margin-inline-start:auto;display:inline-flex;align-items:center;gap:8px;font-size:16px;color:#E4D6B8">
           <span data-t="t1fpzfce">اسحب لتشاهد المزيد</span>
           <svg class="nudge" width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12 H4 M10 6 L4 12 L10 18" fill="none" stroke="#F29A52" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -932,9 +944,10 @@ class Component extends DCLogic {
       a[0].forEach(r => { texts[r.key] = String(r.value == null ? '' : r.value); });
       const products = a[1].map(r => ({
         id: String(r.id), cat: String(r.cat), name: this.esc(r.name), raw: String(r.name || ''), disc: int(r.disc, 0, 90),
-        sizes: (Array.isArray(r.sizes) ? r.sizes : []).map(z => ({ l: this.esc(z.l), raw: String(z.l || ''), p: Math.max(0, Number(z.p) || 0), d: int(z.d, 0, 365) })).filter(z => z.p > 0),
+        grp: (g => (g === 'l' || g === 'b') ? g : 's')(((Array.isArray(r.sizes) ? r.sizes : []).filter(z => z && z.g)[0] || {}).g),
+        sizes: (Array.isArray(r.sizes) ? r.sizes : []).filter(z => z && !z.g).map(z => ({ l: this.esc(z.l), raw: String(z.l || ''), p: Math.max(0, Number(z.p) || 0), a: (z.a == null || z.a === '') ? 0 : Math.max(0, Number(z.a) || 0), d: int(z.d, 0, 365) })).filter(z => z.p > 0 || z.a > 0),
         imgs: (Array.isArray(r.imgs) ? r.imgs : []).map(url).filter(Boolean)
-      })).filter(p => p.sizes.length);
+      }));
       const offers = a[2].map(r => ({ k: this.esc(r.kicker), title: this.esc(r.title), badge: this.esc(r.badge), text: this.esc(r.body), cta: this.esc(r.cta), act: (r.act === 'browse' || r.act === 'custom') ? r.act : '', img: url(r.img) }));
       const reviews = a[3].map(r => ({ img: url(r.img), text: this.esc(r.body), name: this.esc(r.name), stars: int(r.stars, 1, 5) || 5 })).filter(r => r.img || r.text);
       return { texts: texts, products: products, offers: offers, reviews: reviews };
@@ -1065,15 +1078,28 @@ class Component extends DCLogic {
       { id: 'floor', title: T('سجاد أرضيات'), sizes: [{ l: 'صغير', p: 45, d: 7 }, { l: 'وسط', p: 75, d: 10 }, { l: 'كبير', p: 110, d: 14 }] }
     ];
     const DISC = [0, 10, 15, 20];
+    /* الأسعار الثابتة لكل القطع (تتغير من لوحة الأدمن > الإعدادات). القطعة التي لها أسعار خاصة تتجاوزها. */
+    const PRE_DEF = [{ l: 'صغير (10×30 سم)', p: 15, a: 10, d: 5 }, { l: 'كبير (16×40 سم)', p: 20, a: 15, d: 5 }];
+    const PRE = (() => {
+      try {
+        const a = JSON.parse(TXC.cfg_sizes);
+        if (Array.isArray(a)) {
+          const r = a.slice(0, 6).map(z => ({ l: String(z.l || '').slice(0, 60), p: Math.max(0, Number(z.p) || 0), a: Math.max(0, Number(z.a) || 0), d: Math.min(365, Math.max(0, parseInt(z.d, 10) || 0)) })).filter(z => z.l && (z.a > 0 || z.p > 0));
+          if (r.length) return r;
+        }
+      } catch (e) {}
+      return PRE_DEF;
+    })();
     const P = [];
     const PM = {};
     if (cfgOn) {
       ((cd && cd.products) || []).forEach(p => { if (CATS.some(c => c.id === p.cat)) { P.push(p); PM[p.id] = p; } });
     }
-    P.forEach(p => { p.raw = p.raw || p.name; p.sizes.forEach(z => { z.raw = z.raw || z.l; }); });
+    P.forEach(p => { p.raw = p.raw || p.name; if (!p.sizes.length) p.sizes = (p.cat === 'kb' && p.grp !== 'b' ? [PRE[p.grp === 'l' && PRE.length > 1 ? 1 : 0]] : PRE).map(z => ({ l: this.esc(z.l), raw: z.l, p: z.p, a: z.a, d: z.d })); p.sizes.forEach(z => { z.raw = z.raw || z.l; if (!(z.p > 0)) z.p = z.a; }); });
 
     const fmt = v => String(Math.round(v * 100) / 100);
-    const price = (p, si) => Math.round(p.sizes[si].p * (1 - p.disc / 100) * 2) / 2;
+    const price = (p, si) => { const z = p.sizes[si]; return z.a > 0 ? z.a : Math.round(z.p * (1 - p.disc / 100) * 2) / 2; };
+    const hasD = (p, si) => price(p, si) < p.sizes[si].p;
     const load = (k, d) => { try { const v = JSON.parse(localStorage.getItem(k)); return Array.isArray(v) ? v : d; } catch (e) { return d; } };
     const save = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} };
     let fav = load('sj_fav', []).filter(id => PM[id]);
@@ -1103,16 +1129,18 @@ class Component extends DCLogic {
     const itemsDays = items => items.reduce((a, it) => Math.max(a, PM[it.id].sizes[it.si].d), 0);
 
     /* ---------- بطاقات المنتجات ---------- */
+    let kbSz = 's';
+    const tsi = p => (p.cat === 'kb' && p.grp === 'b' && p.sizes.length > 1 && kbSz === 'l') ? 1 : 0;
     const tile = p => {
-      const s = p.sizes[0];
+      const si = tsi(p), s = p.sizes[si];
       const on = fav.indexOf(p.id) > -1;
       return '<div class="tile">' +
-        '<div class="sq" data-act="open" data-id="' + p.id + '" role="button" tabindex="0" aria-label="' + p.name + '">' +
-        (p.disc ? '<span class="dsc">-' + p.disc + '%</span>' : '') + media(p, 0) + '</div>' +
-        '<div class="nmbox" data-act="open" data-id="' + p.id + '">' + p.name + '</div>' +
+        '<div class="sq" data-act="open" data-id="' + p.id + '" data-si="' + si + '" role="button" tabindex="0" aria-label="' + p.name + '">' +
+        (hasD(p, si) ? '<span class="dsc">' + T('خصم') + '</span>' : '') + media(p, 0) + '</div>' +
+        '<div class="nmbox" data-act="open" data-id="' + p.id + '" data-si="' + si + '">' + p.name + '</div>' +
         '<div class="prow"><div class="pr2">' +
-        (p.disc ? '<s class="pold">' + fmt(s.p) + ' د.أ</s>' : '') +
-        '<b class="pnew">' + fmt(price(p, 0)) + ' د.أ</b></div>' +
+        (hasD(p, si) ? '<s class="pold">' + fmt(s.p) + ' د.أ</s>' : '') +
+        '<b class="pnew">' + fmt(price(p, si)) + ' د.أ</b></div>' +
         '<button type="button" class="ib hrt' + (on ? ' on' : '') + '" data-act="fav" data-id="' + p.id + '" aria-label="المفضلة" aria-pressed="' + on + '">' + I.heart + '</button>' +
         '<button type="button" class="ib add" data-act="add" data-id="' + p.id + '" aria-label="أضف إلى السلة">' + I.cartAdd + '</button>' +
         '</div></div>';
@@ -1121,7 +1149,7 @@ class Component extends DCLogic {
       $$('[data-rail]').forEach(r => {
         if (r.childElementCount === 0) {
           const c = r.getAttribute('data-rail');
-          const list = P.filter(p => p.cat === c);
+          const list = P.filter(p => p.cat === c && (c !== 'kb' || p.grp === 'b' || p.grp === kbSz));
           r.innerHTML = list.length ? list.map(tile).join('') : ((cfgOn && !cd) ? '' : '<div class="soon">' + T('قريباً') + '</div>');
         }
       });
@@ -1225,13 +1253,13 @@ class Component extends DCLogic {
       pn('P').innerHTML =
         '<div class="phd"><span class="eyebrow">' + cat.title + '</span><button type="button" class="xb" data-act="close" aria-label="إغلاق">' + I.x + '</button></div>' +
         '<div class="pgrid"><div class="pgal">' +
-        '<div class="gal" data-gal>' + (p.disc ? '<span class="dsc big">-' + p.disc + '%</span>' : '') +
+        '<div class="gal" data-gal>' + (hasD(p, ps.si) ? '<span class="dsc big">' + T('خصم') + '</span>' : '') +
         '<div class="gimg' + (fx ? ' fx' : '') + '">' + media(p, ps.gi, 'صورة ' + (ps.gi + 1) + ' من ' + nImg) + '</div>' +
         '<button type="button" class="garr gr" data-act="gnext" aria-label="الصورة التالية">' + I.chevR + '</button>' +
         '<button type="button" class="garr gl" data-act="gprev" aria-label="الصورة السابقة">' + I.chevL + '</button></div>' +
         '<div class="gdots">' + dots + '</div></div>' +
         '<div class="pinf"><div><h2 class="pname">' + p.name + '</h2>' + wave(fresh) + '</div>' +
-        '<div class="pprice">' + (p.disc ? '<s class="pold">' + fmt(s.p) + ' د.أ</s>' : '') + '<b class="pnew">' + fmt(nw) + ' د.أ</b>' + (p.disc ? '<span class="dchip">' + T('خصم') + ' ' + p.disc + '%</span>' : '') + '</div>' +
+        '<div class="pprice">' + (hasD(p, ps.si) ? '<s class="pold">' + fmt(s.p) + ' د.أ</s>' : '') + '<b class="pnew">' + fmt(nw) + ' د.أ</b>' + (hasD(p, ps.si) ? '<span class="dchip">' + T('وفّر') + ' ' + fmt(s.p - nw) + ' د.أ</span>' : '') + '</div>' +
         '<div class="lbl">' + T('الحجم المتوفر') + '</div><div class="chips">' + chips + '</div>' +
         '<div class="meta">' + I.clock + '<span>' + T('مدة التنفيذ') + ': <b>' + s.d + ' ' + T('أيام') + '</b></span></div>' +
         '<div class="qrow"><span class="lbl">' + T('الكمية') + '</span>' + qty('pq', 0, ps.q) + '</div>' +
@@ -1241,9 +1269,9 @@ class Component extends DCLogic {
         '<button type="button" class="ib hrt' + (on ? ' on' : '') + '" data-act="fav" data-id="' + p.id + '" aria-label="المفضلة" aria-pressed="' + on + '">' + I.heart + '</button></div>' +
         '</div></div>';
     };
-    const openProduct = id => {
+    const openProduct = (id, si0) => {
       if (PM[id]) this.track('product', id, PM[id].raw, 0);
-      ps = { id: id, si: 0, gi: 0, q: 1 };
+      ps = { id: id, si: Math.min(si0 || 0, Math.max(0, (PM[id] ? PM[id].sizes.length : 1) - 1)), gi: 0, q: 1 };
       renderP(true, false);
       openOv('P');
     };
@@ -1279,8 +1307,8 @@ class Component extends DCLogic {
         body = fav.map(id => {
           const p = PM[id], s = p.sizes[0];
           return '<div class="crow"><div class="cth" data-act="open" data-id="' + p.id + '">' + media(p, 0, '') + '</div>' +
-            '<div class="cinf"><b>' + p.name + '</b><span>' + CATS.filter(c => c.id === p.cat)[0].title + (p.disc ? ' · ' + T('خصم') + ' ' + p.disc + '%' : '') + '</span>' +
-            '<span>' + (p.disc ? '<s>' + fmt(s.p) + '</s> ' : '') + '<b style="color:#F29A52">' + fmt(price(p, 0)) + ' د.أ</b></span></div>' +
+            '<div class="cinf"><b>' + p.name + '</b><span>' + CATS.filter(c => c.id === p.cat)[0].title + '</span>' +
+            '<span>' + (hasD(p, 0) ? '<s>' + fmt(s.p) + '</s> ' : '') + '<b style="color:#F29A52">' + fmt(price(p, 0)) + ' د.أ</b></span></div>' +
             '<button type="button" class="bt pri" style="min-height:44px;padding:0 18px;font-size:16px" data-act="fadd" data-id="' + p.id + '">' + I.cartAdd + ' ' + T('للسلة') + '</button>' +
             '<button type="button" class="ib hrt on" data-act="fav" data-id="' + p.id + '" aria-label="إزالة من المفضلة" aria-pressed="true">' + I.heart + '</button></div>';
         }).join('');
@@ -1454,7 +1482,13 @@ class Component extends DCLogic {
       const d = +t.getAttribute('data-d');
       const nImg = ps.id ? (PM[ps.id].imgs.length || 3) : 3;
       switch (a) {
-        case 'open': openProduct(id); break;
+        case 'open': openProduct(id, +t.getAttribute('data-si') || 0); break;
+        case 'kbsz': {
+          kbSz = t.getAttribute('data-v') === 'l' ? 'l' : 's';
+          $$('[data-act="kbsz"]').forEach(b => { const on = b.getAttribute('data-v') === kbSz; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on); });
+          const r = $('[data-rail="kb"]'); if (r) { r.innerHTML = ''; paintRails(); r.scrollLeft = 0; }
+          break;
+        }
         case 'fav': toggleFav(id); if (openKey === 'P') renderP(false, false); break;
         case 'add': addCart(id, 0, 1); break;
         case 'close': closeAll(); break;
@@ -1487,7 +1521,7 @@ class Component extends DCLogic {
       if ((e.key === 'Enter' || e.key === ' ') && e.target && e.target.getAttribute && e.target.getAttribute('data-act') === 'addrev') { e.preventDefault(); e.target.click(); return; }
       if ((e.key === 'Enter' || e.key === ' ') && e.target && e.target.getAttribute && e.target.getAttribute('data-act') === 'open') {
         e.preventDefault();
-        openProduct(e.target.getAttribute('data-id'));
+        openProduct(e.target.getAttribute('data-id'), +e.target.getAttribute('data-si') || 0);
       }
     };
     const int2 = v => Math.min(5, Math.max(1, parseInt(v, 10) || 5));
