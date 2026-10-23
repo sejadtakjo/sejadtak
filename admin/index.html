@@ -392,6 +392,30 @@ function dlImg(o) {
 var sd = 7;
 function fmtDur(s) { s = Math.round(s || 0); if (s < 60) return s + ' ث'; var m = Math.floor(s / 60); return m + ' د' + (s % 60 ? ' ' + (s % 60) + ' ث' : ''); }
 function hourLabel(x) { var h = x % 12 || 12; return h + (x < 12 ? ' ص' : ' م'); }
+var cartCard = null, cartCh = null, cartT = null;
+function loadCartNow() {
+  if (!cartCard || !cartCard.isConnected) return;
+  sb.rpc('admin_cart_now').then(function (r) {
+    if (!cartCard || !cartCard.isConnected) return;
+    cartCard.textContent = '';
+    if (r.error || !r.data) { cartCard.appendChild(h('h3', null, 'بالسلة الآن')); cartCard.appendChild(h('div', { class: 'hint' }, 'شغّل ملف live-cart.sql مرة واحدة في Supabase ليشتغل هذا القسم.')); return; }
+    var d = r.data, its = d.items || [];
+    cartCard.appendChild(h('h3', null, 'بالسلة الآن · ' + (d.pieces || 0) + ' قطعة · ' + (d.people || 0) + ' شخص'));
+    if (!its.length) cartCard.appendChild(h('div', { class: 'hint' }, 'لا أحد حالياً حاطّ قطعاً بالسلة.'));
+    else cartCard.appendChild(h('table', { class: 'tb' }, h('thead', null, h('tr', null, h('th', null, 'القطعة'), h('th', null, 'قطع'), h('th', null, 'أشخاص'))),
+      h('tbody', null, its.map(function (x) { return h('tr', null, h('td', null, x.name || '-'), h('td', { class: 'n' }, x.pieces), h('td', { class: 'n' }, x.people)); }))));
+    cartCard.appendChild(h('div', { class: 'hint' }, 'تتحدّث لحظياً. تختفي القطعة لما الزبون يشيلها أو يكمل الطلب، وتنتهي تلقائياً بعد 48 ساعة من آخر تعديل. الحساب لكل جهاز.'));
+  });
+}
+function watchCart() {
+  try { if (cartCh) sb.removeChannel(cartCh); } catch (e) {}
+  try {
+    cartCh = sb.channel('cart-live').on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'events' }, function (p) {
+      if (p.new && p.new.type === 'cart') { clearTimeout(cartT); cartT = setTimeout(loadCartNow, 400); }
+    }).subscribe();
+  } catch (e) {}
+}
+setInterval(function () { if (sb && cartCard && cartCard.isConnected) loadCartNow(); }, 30000);
 function viewStats() {
   body.textContent = '';
   var chips = h('div', { class: 'chips' }, [[1, 'اليوم'], [7, '٧ أيام'], [30, '٣٠ يوماً'], [0, 'الكل']].map(function (c) {
@@ -402,6 +426,7 @@ function viewStats() {
   sb.rpc('admin_stats', { days: sd }).then(function (r) {
     if (r.error || !r.data) { box.textContent = ''; box.appendChild(h('div', { class: 'empty' }, 'تعذر تحميل الإحصائيات. تأكد أنك شغّلت أحدث ملف supabase.sql.')); return fail(r.error); }
     var d = r.data; box.textContent = '';
+    cartCard = h('div', { class: 'pn' }, h('h3', null, 'بالسلة الآن'), h('div', { class: 'hint' }, 'جاري التحميل...')); box.appendChild(cartCard); loadCartNow(); watchCart();
     var kp = function (v, l) { return h('div', { class: 'kpi' }, h('b', null, v), h('span', null, l)); };
     box.appendChild(h('div', { class: 'kpis' },
       kp(d.visitors, 'زائر مختلف'), kp(d.sessions, 'زيارة'), kp(d.product_views, 'مشاهدة قطع'), kp(d.cart_adds, 'إضافة للسلة'),
@@ -443,20 +468,20 @@ function viewProducts() {
   sb.from('products').select('*').order('sort', { ascending: true }).order('created_at', { ascending: true }).then(function (r) {
     if (r.error) return fail(r.error);
     products = r.data || []; list.textContent = '';
-    var rows = products.filter(function (p) { return pf === 'all' || p.cat === pf; });
+    var rows = products.filter(function (p) { var mx = ((p.sizes || []).filter(function (z) { return z && z.g; })[0] || {}).x || []; return pf === 'all' || p.cat === pf || mx.indexOf(pf) > -1; });
     if (!rows.length) list.appendChild(h('div', { class: 'empty' }, 'لا توجد منتجات هنا. اضغط «منتج جديد».'));
     rows.forEach(function (p) {
       var gm = (p.sizes || []).filter(function (z) { return z && z.g; })[0], gl = { s: 'صغير', l: 'كبير', b: 'الحجمين' }[gm ? gm.g : 's'];
       var pr = (p.sizes || []).filter(function (z) { return z && !z.g; }).map(function (z) { return num(z.a) > 0 ? num(z.a) : num(z.p); }).filter(function (v) { return v > 0; }), lo = Math.min.apply(null, pr), hi = Math.max.apply(null, pr);
       list.appendChild(h('div', { class: 'row' + (p.active ? '' : ' off') },
         (p.imgs && p.imgs[0]) ? h('img', { class: 'th', src: p.imgs[0], alt: '' }) : h('div', { class: 'th' }, 'بدون صورة'),
-        h('div', { class: 'tx' }, h('b', null, p.name), h('small', null, CATS[p.cat] + (p.cat === 'kb' ? ' · ' + gl : '') + ' · ' + (pr.length ? 'أسعار خاصة: ' + (lo === hi ? lo : lo + '–' + hi) + ' د.أ' : 'الأسعار الثابتة') + (p.active ? '' : ' · مخفي'))),
+        h('div', { class: 'tx' }, h('b', null, p.name), h('small', null, CATS[p.cat] + ((gm && gm.x && gm.x.length) ? ' + ' + gm.x.map(function (k) { return CATS[k]; }).join(' + ') : '') + (p.cat === 'kb' ? ' · ' + gl : '') + ((gm && gm.c && gm.c.length) ? ' · ' + (gm.c.length + 1) + ' ألوان' : '') + ' · ' + (pr.length ? 'أسعار خاصة: ' + (lo === hi ? lo : lo + '–' + hi) + ' د.أ' : 'الأسعار الثابتة') + (p.active ? '' : ' · مخفي'))),
         h('div', { class: 'acts' },
           h('button', { class: 'btn sec sm', onclick: function () { editProduct(p); } }, 'تعديل'),
           h('button', { class: 'btn sec sm', onclick: function () { sb.from('products').update({ active: !p.active }).eq('id', p.id).then(function (r) { r.error ? fail(r.error) : viewProducts(); }); } }, p.active ? 'إخفاء' : 'إظهار'),
           h('button', { class: 'btn red sm', onclick: function () {
             if (!confirm('حذف «' + p.name + '» نهائياً؟')) return;
-            sb.from('products').delete().eq('id', p.id).then(function (r) { if (r.error) return fail(r.error); (p.imgs || []).forEach(rmImg); viewProducts(); });
+            sb.from('products').delete().eq('id', p.id).then(function (r) { if (r.error) return fail(r.error); (p.imgs || []).forEach(rmImg); ((((p.sizes || []).filter(function (z) { return z && z.g; })[0] || {}).c) || []).forEach(function (c) { (c.i || []).forEach(rmImg); }); viewProducts(); });
           } }, 'حذف'))));
     });
   });
@@ -490,12 +515,33 @@ function editProduct(p) {
   var sort = h('input', { type: 'number', inputmode: 'numeric', value: p.sort || 0 });
   var active = h('input', { type: 'checkbox', checked: !!p.active, style: 'width:22px;min-height:22px' });
   var gm0 = (p.sizes || []).filter(function (z) { return z && z.g; })[0], grp = gm0 && gm0.g ? gm0.g : 's';
+  var mk0 = gm0 || {}, n0 = h('input', { value: mk0.n0 || '', maxlength: 40, placeholder: 'مثال: أسود' });
+  var xs = (mk0.x || []).slice();
+  var cols = (mk0.c || []).map(function (c) { return { n: c.n || '', i: (c.i || []).slice() }; });
+  var xBox = h('div', { style: 'display:flex;flex-wrap:wrap;gap:14px' });
+  function drawX() {
+    xBox.textContent = '';
+    Object.keys(CATS).filter(function (k) { return k !== cat.value; }).forEach(function (k) {
+      xBox.appendChild(h('label', { style: 'display:flex;gap:8px;align-items:center' }, h('input', { type: 'checkbox', checked: xs.indexOf(k) > -1, style: 'width:22px;min-height:22px', onchange: function (e) { var j = xs.indexOf(k); if (e.target.checked && j < 0) xs.push(k); if (!e.target.checked && j > -1) xs.splice(j, 1); } }), h('span', null, CATS[k])));
+    });
+  }
+  var colBox = h('div', { style: 'display:flex;flex-direction:column;gap:12px' });
+  function drawCols() {
+    colBox.textContent = '';
+    cols.forEach(function (c, i) {
+      colBox.appendChild(h('div', { class: 'fld', style: 'border:1px dashed rgba(242,232,213,.35);border-radius:12px;padding:10px' },
+        h('div', { style: 'display:flex;gap:8px;align-items:center' }, h('input', { value: c.n, maxlength: 40, placeholder: 'اسم اللون', style: 'flex:1', oninput: function (e) { c.n = e.target.value; } }),
+          h('button', { type: 'button', class: 'btn red sm', onclick: function () { if (!confirm('حذف هذا اللون؟')) return; c.i.forEach(function (u) { removed.push(u); }); cols.splice(i, 1); drawCols(); } }, '×')),
+        imgGrid(c.i, 'products', function (u) { removed.push(u); }, true)));
+    });
+    if (cols.length < 11) colBox.appendChild(h('button', { type: 'button', class: 'btn sec sm', style: 'align-self:flex-start', onclick: function () { cols.push({ n: '', i: [] }); drawCols(); } }, '+ لون آخر'));
+  }
   p.sizes = (p.sizes || []).filter(function (z) { return z && !z.g; });
   var PRE = PRE_DEF, custom = !!(p.sizes && p.sizes.length);
   var grpSel = h('select', null, [['s', 'حجم صغير'], ['l', 'حجم كبير'], ['b', 'الحجمين معاً']].map(function (o) { return h('option', { value: o[0], selected: grp === o[0] }, o[1]); }));
   var grpBox = h('label', { class: 'fld' }, h('span', null, 'يظهر ضمن (سجاد الكيبورد فقط)'), grpSel);
   function showGrp() { grpBox.style.display = cat.value === 'kb' ? '' : 'none'; }
-  cat.onchange = showGrp; showGrp();
+  cat.onchange = function () { showGrp(); drawX(); }; showGrp();
   var preTxt = h('small', { style: 'opacity:.85' }), szBox = h('div', { style: 'display:flex;flex-direction:column;gap:8px' });
   var sizes = (p.sizes || []).map(function (z) { return { l: z.l, p: z.p, a: z.a == null ? '' : z.a, d: z.d }; });
   var cust = h('input', { type: 'checkbox', checked: custom, style: 'width:22px;min-height:22px', onchange: function () { custom = cust.checked; if (custom && !sizes.length) sizes = PRE.map(function (z) { return { l: z.l, p: z.p, a: z.a, d: z.d }; }); drawSz(); } });
@@ -513,6 +559,7 @@ function editProduct(p) {
     });
     szBox.appendChild(h('button', { type: 'button', class: 'btn sec sm', style: 'align-self:flex-start', onclick: function () { sizes.push({ l: '', p: '', a: '', d: 5 }); drawSz(); } }, '+ حجم'));
   }
+  drawX(); drawCols();
   drawSz(); getPre(function (x) { PRE = x; drawSz(); });
   var save = h('button', { class: 'btn', type: 'button' }, 'حفظ');
   var m = modal(isNew ? 'منتج جديد' : 'تعديل المنتج', h('div', { style: 'display:flex;flex-direction:column;gap:14px' },
@@ -520,6 +567,8 @@ function editProduct(p) {
     h('div', { class: 'g2' }, h('label', { class: 'fld' }, h('span', null, 'القسم'), cat), grpBox),
     h('div', { class: 'fld' }, h('label', { style: 'display:flex;gap:10px;align-items:center' }, cust, h('span', null, 'أسعار خاصة بهذه القطعة (غير الثابتة)')), preTxt, szBox),
     h('div', { class: 'fld' }, h('span', null, 'الصور (الأولى تظهر على البطاقة). يفضّل PNG بخلفية شفافة'), imgGrid(imgs, 'products', function (u) { removed.push(u); }, true)),
+    h('div', { class: 'fld' }, h('span', null, 'ألوان أخرى لنفس القطعة (نفس الحجم والسعر) — الصور أعلاه هي اللون الأول'), h('label', { class: 'fld' }, h('span', null, 'اسم اللون الأول (يظهر فقط إذا أضفت ألواناً)'), n0), colBox),
+    h('div', { class: 'fld' }, h('span', null, 'يظهر أيضاً في قسم'), xBox),
     h('div', { class: 'g2' }, h('label', { class: 'fld' }, h('span', null, 'الترتيب (الأصغر أولاً)'), sort), h('label', { class: 'fld' }, h('span', null, 'ظاهر في المتجر'), active)),
     h('div', { class: 'acts' }, save, h('button', { class: 'btn sec', type: 'button', onclick: function () { m.remove(); } }, 'إلغاء'))));
   save.onclick = function () {
@@ -527,12 +576,17 @@ function editProduct(p) {
     var sz = custom ? sizes.map(function (z) { var pb = num(z.p), pa = num(z.a); return { l: String(z.l).trim(), p: pb || pa, a: pa || pb, d: Math.round(num(z.d)) }; }).filter(function (z) { return z.l && z.p > 0; }) : [];
     if (!nm) return toast('اكتب اسم القطعة');
     if (custom && !sz.length) return toast('أضف حجماً واحداً على الأقل بسعر، أو ألغِ الأسعار الخاصة');
-    var row = { name: nm, cat: cat.value, disc: 0, sizes: sz.concat([{ g: cat.value === 'kb' ? grpSel.value : 's' }]), imgs: imgs, active: active.checked, sort: Math.round(num(sort.value)) };
+    var cl = cols.map(function (c) { return { n: String(c.n).trim(), i: c.i.slice() }; }).filter(function (c) { return c.i.length; });
+    var mkr = { g: cat.value === 'kb' ? grpSel.value : 's' };
+    var xl = xs.filter(function (k) { return k !== cat.value && CATS[k]; });
+    if (xl.length) mkr.x = xl;
+    if (cl.length) { mkr.c = cl; mkr.n0 = n0.value.trim(); }
+    var row = { name: nm, cat: cat.value, disc: 0, sizes: sz.concat([mkr]), imgs: imgs, active: active.checked, sort: Math.round(num(sort.value)) };
     save.disabled = true;
     var q = isNew ? sb.from('products').insert(row) : sb.from('products').update(row).eq('id', p.id);
     q.then(function (r) {
       if (r.error) { save.disabled = false; return fail(r.error); }
-      removed.filter(function (u) { return imgs.indexOf(u) < 0; }).forEach(rmImg);
+      removed.filter(function (u) { return imgs.indexOf(u) < 0 && !cl.some(function (c) { return c.i.indexOf(u) > -1; }); }).forEach(rmImg);
       m.remove(); toast('تم الحفظ وظهر في المتجر'); viewProducts();
     });
   };
