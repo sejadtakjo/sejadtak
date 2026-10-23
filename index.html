@@ -246,6 +246,11 @@ a{color:#F29A52}a:hover{color:#F8B77E}
 .chips{display:flex;flex-wrap:wrap;gap:10px}
 .chip{min-height:54px;min-width:84px;padding:6px 16px;border-radius:14px;border:2px solid rgba(242,232,213,.4);background:none;color:#F2E8D5;font:700 17px/1.2 'Cairo',sans-serif;cursor:pointer;display:inline-flex;flex-direction:column;justify-content:center;align-items:center;gap:2px;transition:background .2s,border-color .2s,transform .2s}
 .chip small{font-size:14px;font-weight:500;opacity:.85}
+.cols{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-top:14px}
+.col{width:64px;padding:0;border:2px solid rgba(242,232,213,.35);border-radius:12px;background:none;color:#F2E8D5;cursor:pointer;overflow:hidden;font:600 12px/1.2 'Cairo',sans-serif}
+.col img{display:block;width:100%;aspect-ratio:1/1;object-fit:cover}
+.col small{display:block;padding:2px 2px 3px;font-size:12px}
+.col:hover{border-color:#E8863A}.col.on{border-color:#E8863A;box-shadow:0 0 0 2px #E8863A}
 .chip:hover{border-color:#E8863A}
 .chip.on{background:#E8863A;border-color:#E8863A;color:#2B2312}
 .meta{display:flex;align-items:center;gap:10px;font-size:18px;color:#F2E8D5}
@@ -943,8 +948,14 @@ class Component extends DCLogic {
         id: String(r.id), cat: String(r.cat), name: this.esc(r.name), raw: String(r.name || ''), disc: int(r.disc, 0, 90),
         grp: (g => (g === 'l' || g === 'b') ? g : 's')(((Array.isArray(r.sizes) ? r.sizes : []).filter(z => z && z.g)[0] || {}).g),
         sizes: (Array.isArray(r.sizes) ? r.sizes : []).filter(z => z && !z.g).map(z => ({ l: this.esc(z.l), raw: String(z.l || ''), p: Math.max(0, Number(z.p) || 0), a: (z.a == null || z.a === '') ? 0 : Math.max(0, Number(z.a) || 0), d: int(z.d, 0, 365) })).filter(z => z.p > 0 || z.a > 0),
-        imgs: (Array.isArray(r.imgs) ? r.imgs : []).map(url).filter(Boolean)
+        imgs: (Array.isArray(r.imgs) ? r.imgs : []).map(url).filter(Boolean),
+        mk: ((Array.isArray(r.sizes) ? r.sizes : []).filter(z => z && z.g)[0] || {})
       }));
+      products.forEach(p => {
+        const mk = p.mk || {}; delete p.mk;
+        p.xs = (Array.isArray(mk.x) ? mk.x : []).map(String).filter(c => /^(kb|car|wall|floor)$/.test(c) && c !== p.cat);
+        p.cols = [{ n: this.esc(mk.n0 || ''), raw: String(mk.n0 || ''), imgs: p.imgs }].concat((Array.isArray(mk.c) ? mk.c : []).slice(0, 12).map(c => ({ n: this.esc((c && c.n) || ''), raw: String((c && c.n) || ''), imgs: (Array.isArray(c && c.i) ? c.i : []).map(url).filter(Boolean) })).filter(c => c.imgs.length));
+      });
       const offers = a[2].map(r => ({ k: this.esc(r.kicker), title: this.esc(r.title), badge: this.esc(r.badge), text: this.esc(r.body), cta: this.esc(r.cta), act: (r.act === 'browse' || r.act === 'custom') ? r.act : '', img: url(r.img) }));
       const reviews = a[3].map(r => ({ img: url(r.img), text: this.esc(r.body), name: this.esc(r.name), stars: int(r.stars, 1, 5) || 5 })).filter(r => r.img || r.text);
       return { texts: texts, products: products, offers: offers, reviews: reviews };
@@ -1097,7 +1108,7 @@ class Component extends DCLogic {
     if (cfgOn) {
       ((cd && cd.products) || []).forEach(p => { if (CATS.some(c => c.id === p.cat)) { P.push(p); PM[p.id] = p; } });
     }
-    P.forEach(p => { p.raw = p.raw || p.name; if (!p.sizes.length) p.sizes = (p.cat === 'kb' && p.grp !== 'b' ? [PRE[p.grp === 'l' && PRE.length > 1 ? 1 : 0]] : PRE).map(z => ({ l: this.esc(z.l), raw: z.l, p: z.p, a: z.a, d: z.d })); p.sizes.forEach(z => { z.raw = z.raw || z.l; if (!(z.p > 0)) z.p = z.a; }); });
+    P.forEach(p => { p.raw = p.raw || p.name; p.xs = p.xs || []; p.cols = p.cols || [{ n: '', raw: '', imgs: p.imgs || [] }]; if (!p.sizes.length) p.sizes = (p.cat === 'kb' && p.grp !== 'b' ? [PRE[p.grp === 'l' && PRE.length > 1 ? 1 : 0]] : PRE).map(z => ({ l: this.esc(z.l), raw: z.l, p: z.p, a: z.a, d: z.d })); p.sizes.forEach(z => { z.raw = z.raw || z.l; if (!(z.p > 0)) z.p = z.a; }); });
 
     const fmt = v => String(Math.round(v * 100) / 100);
     const price = (p, si) => { const z = p.sizes[si]; return z.a > 0 ? z.a : Math.round(z.p * (1 - p.disc / 100) * 2) / 2; };
@@ -1105,7 +1116,7 @@ class Component extends DCLogic {
     const load = (k, d) => { try { const v = JSON.parse(localStorage.getItem(k)); return Array.isArray(v) ? v : d; } catch (e) { return d; } };
     const save = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} };
     let fav = load('sj_fav', []).filter(id => PM[id]);
-    let cart = load('sj_cart', []).filter(it => it && PM[it.id] && PM[it.id].sizes[it.si] && it.q > 0);
+    let cart = load('sj_cart', []).filter(it => it && PM[it.id] && PM[it.id].sizes[it.si] && it.q > 0).map(it => { it.ci = (it.ci > 0 && PM[it.id].cols[it.ci]) ? it.ci : 0; return it; });
 
     const $ = (s, r) => (r || doc).querySelector(s);
     const $$ = (s, r) => Array.from((r || doc).querySelectorAll(s));
@@ -1124,7 +1135,8 @@ class Component extends DCLogic {
     };
     const wave = () => '';
     const stitchBox = '<svg class="sbx" aria-hidden="true"><rect class="stitch" x="1.5" y="1.5" rx="22" ry="22" fill="none" stroke="#F29A52" stroke-width="2" stroke-linecap="round"/></svg>';
-    const media = (p, i) => p.imgs[i] ? '<img class="pimg" src="' + p.imgs[i] + '" alt="' + p.name + '">' : '';
+    const cim = (p, ci) => (p.cols[ci || 0] || p.cols[0]).imgs;
+    const media = (p, i, alt, ci) => { const m = cim(p, ci); return m[i] ? '<img class="pimg" src="' + m[i] + '" alt="' + p.name + '">' : ''; };
 
     const cartCount = () => cart.reduce((a, it) => a + it.q, 0);
     const itemsTotal = items => items.reduce((a, it) => a + price(PM[it.id], it.si) * it.q, 0);
@@ -1151,7 +1163,7 @@ class Component extends DCLogic {
       $$('[data-rail]').forEach(r => {
         if (r.childElementCount === 0) {
           const c = r.getAttribute('data-rail');
-          const list = P.filter(p => p.cat === c && (c !== 'kb' || p.grp === 'b' || p.grp === kbSz));
+          const list = P.filter(p => (p.cat === c || p.xs.indexOf(c) > -1) && (c !== 'kb' || p.grp === 'b' || p.grp === kbSz));
           r.innerHTML = list.length ? list.map(tile).join('') : ((cfgOn && !cd) ? '' : '<div class="soon">' + T('قريباً') + '</div>');
         }
       });
@@ -1195,7 +1207,18 @@ class Component extends DCLogic {
         t.classList.toggle('on', on);
       });
     };
+    const synced = {};
+    const cartSync = () => {
+      if (!this._tk) return;
+      const now = {};
+      cart.forEach(it => { now[it.id] = (now[it.id] || 0) + it.q; });
+      Object.keys(synced).concat(Object.keys(now)).forEach(id => {
+        const q = now[id] || 0;
+        if ((synced[id] || 0) !== q || (q > 0 && synced[id] == null)) { synced[id] = q; if (PM[id]) this.track('cart', id, '@' + PM[id].raw, Math.min(q, 14400)); }
+      });
+    };
     const badges = () => {
+      cartSync();
       const f = $$('[data-badge="fav"]'), c = $$('[data-badge="cart"]');
       f.forEach(b => { b.textContent = fav.length; b.classList.toggle('z', fav.length === 0); });
       c.forEach(b => { b.textContent = cartCount(); b.classList.toggle('z', cartCount() === 0); });
@@ -1238,12 +1261,12 @@ class Component extends DCLogic {
       '<div class="qty"><button type="button" data-act="' + act + '" data-i="' + i + '" data-d="-1" aria-label="أنقص">−</button><b>' + q + '</b><button type="button" data-act="' + act + '" data-i="' + i + '" data-d="1" aria-label="زد">+</button></div>';
 
     /* ---------- صفحة المنتج ---------- */
-    let ps = { id: null, si: 0, gi: 0, q: 1 };
+    let ps = { id: null, si: 0, ci: 0, gi: 0, q: 1 };
     const renderP = (fresh, fx) => {
       const p = PM[ps.id];
       const s = p.sizes[ps.si];
       const nw = price(p, ps.si);
-      const nImg = (p.imgs.length || 3);
+      const nImg = (cim(p, ps.ci).length || 3);
       const on = fav.indexOf(p.id) > -1;
       const cat = CATS.filter(c => c.id === p.cat)[0];
       let dots = '';
@@ -1252,14 +1275,20 @@ class Component extends DCLogic {
       p.sizes.forEach((z, i) => {
         chips += '<button type="button" class="chip' + (i === ps.si ? ' on' : '') + '" data-act="size" data-i="' + i + '" aria-pressed="' + (i === ps.si) + '"><span>' + z.l + '</span><small>' + fmt(price(p, i)) + ' د.أ</small></button>';
       });
+      let colsH = '';
+      if (p.cols.length > 1) {
+        colsH = '<div class="cols" role="group" aria-label="' + T('اللون') + '">';
+        p.cols.forEach((c, i) => { colsH += '<button type="button" class="col' + (i === ps.ci ? ' on' : '') + '" data-act="color" data-i="' + i + '" aria-pressed="' + (i === ps.ci) + '" title="' + c.n + '"><img src="' + c.imgs[0] + '" alt="' + c.n + '"><small>' + c.n + '</small></button>'; });
+        colsH += '</div>';
+      }
       pn('P').innerHTML =
         '<div class="phd"><span class="eyebrow">' + cat.title + '</span><button type="button" class="xb" data-act="close" aria-label="إغلاق">' + I.x + '</button></div>' +
         '<div class="pgrid"><div class="pgal">' +
         '<div class="gal" data-gal>' + (hasD(p, ps.si) ? '<span class="dsc big">' + T('خصم') + '</span>' : '') +
-        '<div class="gimg' + (fx ? ' fx' : '') + '">' + media(p, ps.gi, 'صورة ' + (ps.gi + 1) + ' من ' + nImg) + '</div>' +
+        '<div class="gimg' + (fx ? ' fx' : '') + '">' + media(p, ps.gi, '', ps.ci) + '</div>' +
         '<button type="button" class="garr gr" data-act="gnext" aria-label="الصورة التالية">' + I.chevR + '</button>' +
         '<button type="button" class="garr gl" data-act="gprev" aria-label="الصورة السابقة">' + I.chevL + '</button></div>' +
-        '<div class="gdots">' + dots + '</div></div>' +
+        '<div class="gdots">' + dots + '</div>' + colsH + '</div>' +
         '<div class="pinf"><div><h2 class="pname">' + p.name + '</h2>' + wave(fresh) + '</div>' +
         '<div class="pprice">' + (hasD(p, ps.si) ? '<s class="pold">' + fmt(s.p) + ' د.أ</s>' : '') + '<b class="pnew">' + fmt(nw) + ' د.أ</b>' + (hasD(p, ps.si) ? '<span class="dchip">' + T('وفّر') + ' ' + fmt(s.p - nw) + ' د.أ</span>' : '') + '</div>' +
         '<div class="lbl">' + T('الحجم المتوفر') + '</div><div class="chips">' + chips + '</div>' +
@@ -1273,7 +1302,7 @@ class Component extends DCLogic {
     };
     const openProduct = (id, si0) => {
       if (PM[id]) this.track('product', id, PM[id].raw, 0);
-      ps = { id: id, si: Math.min(si0 || 0, Math.max(0, (PM[id] ? PM[id].sizes.length : 1) - 1)), gi: 0, q: 1 };
+      ps = { id: id, si: Math.min(si0 || 0, Math.max(0, (PM[id] ? PM[id].sizes.length : 1) - 1)), ci: 0, gi: 0, q: 1 };
       renderP(true, false);
       openOv('P');
     };
@@ -1286,8 +1315,8 @@ class Component extends DCLogic {
       } else {
         const rows = cart.map((it, i) => {
           const p = PM[it.id], z = p.sizes[it.si], pr = price(p, it.si);
-          return '<div class="crow"><div class="cth" data-act="open" data-id="' + p.id + '">' + media(p, 0, '') + '</div>' +
-            '<div class="cinf"><b>' + p.name + '</b><span>' + T('الحجم') + ': ' + z.l + ' · ' + z.d + ' ' + T('أيام') + '</span><span>' + fmt(pr) + ' د.أ للقطعة</span></div>' +
+          return '<div class="crow"><div class="cth" data-act="open" data-id="' + p.id + '">' + media(p, 0, '', it.ci) + '</div>' +
+            '<div class="cinf"><b>' + p.name + '</b>' + (p.cols[it.ci] && p.cols[it.ci].n ? '<span>' + T('اللون') + ': ' + p.cols[it.ci].n + '</span>' : '') + '<span>' + T('الحجم') + ': ' + z.l + ' · ' + z.d + ' ' + T('أيام') + '</span><span>' + fmt(pr) + ' د.أ للقطعة</span></div>' +
             qty('cq', i, it.q) + '<div class="cl">' + fmt(pr * it.q) + ' د.أ</div>' +
             '<button type="button" class="ib" data-act="crm" data-i="' + i + '" aria-label="حذف">' + I.trash + '</button></div>';
         }).join('');
@@ -1340,7 +1369,7 @@ class Component extends DCLogic {
       } else {
         list = '<div class="sum">' + ord.items.map(it => {
           const p = PM[it.id], z = p.sizes[it.si];
-          return '<div class="srow"><span>' + p.name + ' · ' + T('الحجم') + ': ' + z.l + ' · ' + T('الكمية') + ': ' + it.q + '</span><b>' + fmt(price(p, it.si) * it.q) + ' د.أ</b></div>';
+          return '<div class="srow"><span>' + p.name + (p.cols[it.ci] && p.cols[it.ci].n ? ' · ' + T('اللون') + ': ' + p.cols[it.ci].n : '') + ' · ' + T('الحجم') + ': ' + z.l + ' · ' + T('الكمية') + ': ' + it.q + '</span><b>' + fmt(price(p, it.si) * it.q) + ' د.أ</b></div>';
         }).join('') + '<div class="srow"><span>' + T('مدة التنفيذ') + '</span><b>' + itemsDays(ord.items) + ' ' + T('أيام') + '</b></div>' +
           '<div class="srow" id="oship"></div><div class="srow big" id="otot"></div></div>';
       }
@@ -1455,12 +1484,12 @@ class Component extends DCLogic {
         L.push('المنتجات:');
         ord.items.forEach((it, i) => {
           const p = PM[it.id], z = p.sizes[it.si];
-          L.push((i + 1) + ') ' + p.raw, '   الحجم: ' + z.raw, '   الكمية: ' + it.q, '   السعر: ' + fmt(price(p, it.si) * it.q) + ' د.أ');
+          L.push((i + 1) + ') ' + p.raw, ...(p.cols[it.ci] && p.cols[it.ci].raw ? ['   اللون: ' + p.cols[it.ci].raw] : []), '   الحجم: ' + z.raw, '   الكمية: ' + it.q, '   السعر: ' + fmt(price(p, it.si) * it.q) + ' د.أ');
         });
         L.push('', 'التوصيل: ' + fmt(shipFee()) + ' د.أ', 'السعر النهائي: ' + fmt(itemsTotal(ord.items) + shipFee()) + ' د.أ', 'مدة التنفيذ: ' + itemsDays(ord.items) + ' أيام');
       }
       if (ord.file) L.push('', cfgOn ? 'صورة التصميم مرفقة بالطلب في الموقع 📎' : 'سأرفق صورة التصميم في المحادثة 📎');
-      if (cfgOn) { submit({ name: nm, phone: ph, area: ar + ' (توصيل ' + fmt(shipFee()) + ' د.أ)', address: ad, mode: ord.mode, items: custom ? [] : ord.items.map(it => ({ name: PM[it.id].raw, size: PM[it.id].sizes[it.si].raw, qty: it.q, price: price(PM[it.id], it.si) * it.q })), total: custom ? 0 : itemsTotal(ord.items) + shipFee(), days: custom ? 0 : itemsDays(ord.items) }, custom, L); return; }
+      if (cfgOn) { submit({ name: nm, phone: ph, area: ar + ' (توصيل ' + fmt(shipFee()) + ' د.أ)', address: ad, mode: ord.mode, items: custom ? [] : ord.items.map(it => ({ name: PM[it.id].raw, size: PM[it.id].sizes[it.si].raw + (PM[it.id].cols[it.ci] && PM[it.id].cols[it.ci].raw ? ' - ' + PM[it.id].cols[it.ci].raw : ''), qty: it.q, price: price(PM[it.id], it.si) * it.q })), total: custom ? 0 : itemsTotal(ord.items) + shipFee(), days: custom ? 0 : itemsDays(ord.items) }, custom, L); return; }
       err.textContent = 'الطلب غير متاح حالياً، يرجى المحاولة لاحقاً.';
     };
 
@@ -1472,9 +1501,10 @@ class Component extends DCLogic {
       badges(); hearts();
       if (openKey === 'F') renderF(false);
     };
-    const addCart = (id, si, q) => {
-      const ex = cart.filter(it => it.id === id && it.si === si)[0];
-      if (ex) ex.q = Math.min(20, ex.q + q); else cart.push({ id: id, si: si, q: q });
+    const addCart = (id, si, q, ci) => {
+      ci = ci || 0;
+      const ex = cart.filter(it => it.id === id && it.si === si && (it.ci || 0) === ci)[0];
+      if (ex) ex.q = Math.min(20, ex.q + q); else cart.push({ id: id, si: si, ci: ci, q: q });
       save('sj_cart', cart);
       badges();
       if (PM[id]) this.track('cart', id, PM[id].raw, 0);
@@ -1492,7 +1522,7 @@ class Component extends DCLogic {
       const id = t.getAttribute('data-id');
       const i = +t.getAttribute('data-i');
       const d = +t.getAttribute('data-d');
-      const nImg = ps.id ? (PM[ps.id].imgs.length || 3) : 3;
+      const nImg = ps.id ? (cim(PM[ps.id], ps.ci).length || 3) : 3;
       switch (a) {
         case 'open': openProduct(id, +t.getAttribute('data-si') || 0); break;
         case 'zone': {
@@ -1518,11 +1548,12 @@ class Component extends DCLogic {
         case 'gdot': ps.gi = i; renderP(false, true); break;
         case 'size': ps.si = i; renderP(false, false); break;
         case 'pq': ps.q = Math.min(20, Math.max(1, ps.q + d)); renderP(false, false); break;
-        case 'padd': addCart(ps.id, ps.si, ps.q); break;
-        case 'pbuy': openOrder([{ id: ps.id, si: ps.si, q: ps.q }], 'single'); break;
+        case 'padd': addCart(ps.id, ps.si, ps.q, ps.ci); break;
+        case 'color': ps.ci = Math.max(0, Math.min(PM[ps.id].cols.length - 1, i)); ps.gi = 0; renderP(false, true); break;
+        case 'pbuy': openOrder([{ id: ps.id, si: ps.si, ci: ps.ci, q: ps.q }], 'single'); break;
         case 'cq': if (cart[i]) { cart[i].q = Math.min(20, Math.max(1, cart[i].q + d)); save('sj_cart', cart); badges(); renderC(false); } break;
         case 'crm': cart.splice(i, 1); save('sj_cart', cart); badges(); renderC(false); break;
-        case 'cbuy': if (cart.length) openOrder(cart.map(it => ({ id: it.id, si: it.si, q: it.q })), 'cart'); break;
+        case 'cbuy': if (cart.length) openOrder(cart.map(it => ({ id: it.id, si: it.si, ci: it.ci || 0, q: it.q })), 'cart'); break;
         case 'browse': closeAll(); go('products'); break;
         case 'fadd': addCart(id, 0, 1); break;
         case 'custom': openOrder([], 'custom'); break;
@@ -1566,7 +1597,7 @@ class Component extends DCLogic {
       const dx = e.changedTouches[0].clientX - gx;
       gx = null;
       if (Math.abs(dx) > 45) {
-        const n = (PM[ps.id].imgs.length || 3);
+        const n = (cim(PM[ps.id], ps.ci).length || 3);
         ps.gi = (ps.gi + (dx < 0 ? 1 : n - 1)) % n;
         renderP(false, true);
       }
