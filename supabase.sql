@@ -212,3 +212,20 @@ exception when duplicate_object then null; end $$;
 --    أنشئ المستخدم أولاً من Authentication > Users > Add user (بريد وكلمة سر قوية)،
 --    ثم بدّل البريد أدناه ببريدك وشغّل هذا السطر وحده (البريد يبقى هنا فقط ولا يدخل أي كود للموقع):
 -- insert into public.admins (uid) select id from auth.users where email = 'ضع-بريدك-هنا@example.com';
+
+
+-- 7) أكواد الخصم (البرومو): الزائر يقرأ الأكواد المفعّلة فقط، والإدارة للأدمن
+create table if not exists public.promo_codes (
+  id uuid primary key default gen_random_uuid(),
+  code text not null unique check (code = upper(code) and code ~ '^[A-Z0-9_-]{3,40}$'),
+  percent int not null check (percent between 1 and 90),
+  active boolean not null default true,
+  created_at timestamptz not null default now()
+);
+alter table public.promo_codes enable row level security;
+drop policy if exists "read active promo codes" on public.promo_codes;
+drop policy if exists "admin promo codes" on public.promo_codes;
+create policy "read active promo codes" on public.promo_codes for select to anon, authenticated using (active or public.is_admin());
+create policy "admin promo codes" on public.promo_codes for all to authenticated using (public.is_admin()) with check (public.is_admin());
+grant select on public.promo_codes to anon, authenticated;
+grant insert, update, delete on public.promo_codes to authenticated;

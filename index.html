@@ -940,7 +940,8 @@ class Component extends DCLogic {
       get('site_texts', 'select=key,value'),
       get('products', 'select=*&active=eq.true&order=sort.asc,created_at.asc'),
       get('offers', 'select=*&active=eq.true&order=sort.asc,created_at.asc'),
-      get('reviews', 'select=*&active=eq.true&order=sort.asc,created_at.asc')
+      get('reviews', 'select=*&active=eq.true&order=sort.asc,created_at.asc'),
+      get('promo_codes', 'select=code,percent,active&active=eq.true').catch(() => [])
     ]).then(a => {
       const texts = {};
       a[0].forEach(r => { texts[r.key] = String(r.value == null ? '' : r.value); });
@@ -958,8 +959,9 @@ class Component extends DCLogic {
       });
       const offers = a[2].map(r => ({ k: this.esc(r.kicker), title: this.esc(r.title), badge: this.esc(r.badge), text: this.esc(r.body), cta: this.esc(r.cta), act: (r.act === 'browse' || r.act === 'custom') ? r.act : '', img: url(r.img) }));
       const reviews = a[3].map(r => ({ img: url(r.img), text: this.esc(r.body), name: this.esc(r.name), stars: int(r.stars, 1, 5) || 5 })).filter(r => r.img || r.text);
-      return { texts: texts, products: products, offers: offers, reviews: reviews };
-    }).catch(() => ({ texts: {}, products: [], offers: [], reviews: [], fail: true }));
+      const promos = (a[4] || []).filter(r => r.active).map(r => ({ code: String(r.code || '').toUpperCase(), percent: int(r.percent, 1, 90) }));
+      return { texts: texts, products: products, offers: offers, reviews: reviews, promos: promos };
+    }).catch(() => ({ texts: {}, products: [], offers: [], reviews: [], promos: [], fail: true }));
   }
   track(type, pid, label, secs) {
     const C = window.SJ_CFG || {};
@@ -1111,8 +1113,18 @@ class Component extends DCLogic {
     P.forEach(p => { p.raw = p.raw || p.name; p.xs = p.xs || []; p.cols = p.cols || [{ n: '', raw: '', imgs: p.imgs || [] }]; if (!p.sizes.length) p.sizes = (p.cat === 'kb' && p.grp !== 'b' ? [PRE[p.grp === 'l' && PRE.length > 1 ? 1 : 0]] : PRE).map(z => ({ l: this.esc(z.l), raw: z.l, p: z.p, a: z.a, d: z.d })); p.sizes.forEach(z => { z.raw = z.raw || z.l; if (!(z.p > 0)) z.p = z.a; }); });
 
     const fmt = v => String(Math.round(v * 100) / 100);
-    const price = (p, si) => { const z = p.sizes[si]; return z.a > 0 ? z.a : Math.round(z.p * (1 - p.disc / 100) * 2) / 2; };
-    const hasD = (p, si) => price(p, si) < p.sizes[si].p;
+    const globalDiscount = Math.max(0, Math.min(90, parseInt(TXC.cfg_discount || '0', 10) || 0));
+    const promoRows = (cd && cd.promos) || [];
+    let appliedPromo = null;
+    const originalPrice = (p, si) => Math.max(0, Number(p.sizes[si].p) || 0);
+    const price = (p, si) => {
+      const z = p.sizes[si], base = originalPrice(p, si);
+      if (globalDiscount > 0) return Math.round(base * (1 - globalDiscount / 100) * 100) / 100;
+      return z.a > 0 ? z.a : Math.round(base * (1 - (p.disc || 0) / 100) * 100) / 100;
+    };
+    const cartUnitPrice = (p, si) => appliedPromo ? Math.round(originalPrice(p, si) * (1 - appliedPromo.percent / 100) * 100) / 100 : price(p, si);
+    const hasD = (p, si) => price(p, si) < originalPrice(p, si);
+    const discountPercent = (p, si) => globalDiscount > 0 ? globalDiscount : (hasD(p, si) && originalPrice(p, si) > 0 ? Math.round((1 - price(p, si) / originalPrice(p, si)) * 100) : 0);
     const load = (k, d) => { try { const v = JSON.parse(localStorage.getItem(k)); return Array.isArray(v) ? v : d; } catch (e) { return d; } };
     const save = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} };
     let fav = load('sj_fav', []).filter(id => PM[id]);
@@ -1139,7 +1151,7 @@ class Component extends DCLogic {
     const media = (p, i, alt, ci) => { const m = cim(p, ci); return m[i] ? '<img class="pimg" src="' + m[i] + '" alt="' + p.name + '">' : ''; };
 
     const cartCount = () => cart.reduce((a, it) => a + it.q, 0);
-    const itemsTotal = items => items.reduce((a, it) => a + price(PM[it.id], it.si) * it.q, 0);
+    const itemsTotal = items => items.reduce((a, it) => a + cartUnitPrice(PM[it.id], it.si) * it.q, 0);
     const itemsDays = items => items.reduce((a, it) => Math.max(a, PM[it.id].sizes[it.si].d), 0);
 
     /* ---------- بطاقات المنتجات ---------- */
@@ -1150,10 +1162,10 @@ class Component extends DCLogic {
       const on = fav.indexOf(p.id) > -1;
       return '<div class="tile">' +
         '<div class="sq" data-act="open" data-id="' + p.id + '" data-si="' + si + '" role="button" tabindex="0" aria-label="' + p.name + '">' +
-        '<svg class="ants" aria-hidden="true"><rect x="1" y="1" rx="19" ry="19" style="width:calc(100% - 2px);height:calc(100% - 2px)"/></svg>' + (hasD(p, si) ? '<span class="dsc">' + T('خصم') + '</span>' : '') + media(p, 0) + '</div>' +
+        '<svg class="ants" aria-hidden="true"><rect x="1" y="1" rx="19" ry="19" style="width:calc(100% - 2px);height:calc(100% - 2px)"/></svg>' + (hasD(p, si) ? '<span class="dsc">' + discountPercent(p, si) + '% خصم</span>' : '') + media(p, 0) + '</div>' +
         '<div class="nmbox" data-act="open" data-id="' + p.id + '" data-si="' + si + '">' + p.name + '</div>' +
         '<div class="prow"><div class="pr2">' +
-        (hasD(p, si) ? '<s class="pold">' + fmt(s.p) + ' د.أ</s>' : '') +
+        (hasD(p, si) ? '<s class="pold">' + fmt(originalPrice(p, si)) + ' د.أ</s>' : '') +
         '<b class="pnew">' + fmt(price(p, si)) + ' د.أ</b></div>' +
         '<button type="button" class="ib hrt' + (on ? ' on' : '') + '" data-act="fav" data-id="' + p.id + '" aria-label="المفضلة" aria-pressed="' + on + '">' + I.heart + '</button>' +
         '<button type="button" class="ib add" data-act="add" data-id="' + p.id + '" aria-label="أضف إلى السلة">' + I.cartAdd + '</button>' +
@@ -1284,13 +1296,13 @@ class Component extends DCLogic {
       pn('P').innerHTML =
         '<div class="phd"><span class="eyebrow">' + cat.title + '</span><button type="button" class="xb" data-act="close" aria-label="إغلاق">' + I.x + '</button></div>' +
         '<div class="pgrid"><div class="pgal">' +
-        '<div class="gal" data-gal>' + (hasD(p, ps.si) ? '<span class="dsc big">' + T('خصم') + '</span>' : '') +
+        '<div class="gal" data-gal>' + (hasD(p, ps.si) ? '<span class="dsc big">' + discountPercent(p, ps.si) + '% خصم</span>' : '') +
         '<div class="gimg' + (fx ? ' fx' : '') + '">' + media(p, ps.gi, '', ps.ci) + '</div>' +
         '<button type="button" class="garr gr" data-act="gnext" aria-label="الصورة التالية">' + I.chevR + '</button>' +
         '<button type="button" class="garr gl" data-act="gprev" aria-label="الصورة السابقة">' + I.chevL + '</button></div>' +
         '<div class="gdots">' + dots + '</div>' + colsH + '</div>' +
         '<div class="pinf"><div><h2 class="pname">' + p.name + '</h2>' + wave(fresh) + '</div>' +
-        '<div class="pprice">' + (hasD(p, ps.si) ? '<s class="pold">' + fmt(s.p) + ' د.أ</s>' : '') + '<b class="pnew">' + fmt(nw) + ' د.أ</b>' + (hasD(p, ps.si) ? '<span class="dchip">' + T('وفّر') + ' ' + fmt(s.p - nw) + ' د.أ</span>' : '') + '</div>' +
+        '<div class="pprice">' + (hasD(p, ps.si) ? '<s class="pold">' + fmt(originalPrice(p, ps.si)) + ' د.أ</s>' : '') + '<b class="pnew">' + fmt(nw) + ' د.أ</b>' + (hasD(p, ps.si) ? '<span class="dchip">' + T('وفّر') + ' ' + fmt(originalPrice(p, ps.si) - nw) + ' د.أ</span>' : '') + '</div>' +
         '<div class="lbl">' + T('الحجم المتوفر') + '</div><div class="chips">' + chips + '</div>' +
         '<div class="meta">' + I.clock + '<span>' + T('مدة التنفيذ') + ': <b>' + s.d + ' ' + T('أيام') + '</b></span></div>' +
         '<div class="qrow"><span class="lbl">' + T('الكمية') + '</span>' + qty('pq', 0, ps.q) + '</div>' +
@@ -1314,14 +1326,17 @@ class Component extends DCLogic {
         body = '<div class="empty"><svg class="okmark" viewBox="0 0 96 96" aria-hidden="true"><path class="draw" pathLength="1" d="M10 18 H20 L30 62 H72 L82 28 H24" fill="none" stroke="#F29A52" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><circle class="pop" cx="38" cy="76" r="6" fill="#F2E8D5" style="animation-delay:.9s"/><circle class="pop" cx="66" cy="76" r="6" fill="#F2E8D5" style="animation-delay:1.1s"/></svg><span>' + T('السلة فارغة حالياً') + '</span><button type="button" class="bt pri" data-act="browse">' + T('تصفح المنتجات') + '</button></div>';
       } else {
         const rows = cart.map((it, i) => {
-          const p = PM[it.id], z = p.sizes[it.si], pr = price(p, it.si);
+          const p = PM[it.id], z = p.sizes[it.si], pr = cartUnitPrice(p, it.si);
           return '<div class="crow"><div class="cth" data-act="open" data-id="' + p.id + '">' + media(p, 0, '', it.ci) + '</div>' +
             '<div class="cinf"><b>' + p.name + '</b>' + (p.cols[it.ci] && p.cols[it.ci].n ? '<span>' + T('اللون') + ': ' + p.cols[it.ci].n + '</span>' : '') + '<span>' + T('الحجم') + ': ' + z.l + ' · ' + z.d + ' ' + T('أيام') + '</span><span>' + fmt(pr) + ' د.أ للقطعة</span></div>' +
             qty('cq', i, it.q) + '<div class="cl">' + fmt(pr * it.q) + ' د.أ</div>' +
             '<button type="button" class="ib" data-act="crm" data-i="' + i + '" aria-label="حذف">' + I.trash + '</button></div>';
         }).join('');
         body = rows +
-          '<div class="sum"><div class="srow"><span>' + T('عدد القطع') + '</span><b>' + cartCount() + '</b></div>' +
+          '<div class="sum"><div class="srow"><span>كود الخصم</span><div style="display:flex;gap:8px;flex-wrap:wrap"><input id="promoInput" dir="ltr" maxlength="40" placeholder="أدخل البرومو كود" style="max-width:220px;min-height:42px"><button type="button" class="bt sec" data-act="promo-apply" style="min-height:42px;padding:0 16px">تطبيق</button>' +
+          (appliedPromo ? '<button type="button" class="bt sec" data-act="promo-remove" style="min-height:42px;padding:0 12px">إزالة</button>' : '') + '</div></div>' +
+          (appliedPromo ? '<div class="srow"><span>كود ' + appliedPromo.code + ' · خصم ' + appliedPromo.percent + '%</span><b>تم التفعيل</b></div>' : (globalDiscount > 0 ? '<div class="srow"><span>الخصم العام</span><b>' + globalDiscount + '%</b></div>' : '')) +
+          '<div class="srow"><span>' + T('عدد القطع') + '</span><b>' + cartCount() + '</b></div>' +
           '<div class="srow"><span>' + T('مدة التنفيذ') + '</span><b>' + itemsDays(cart) + ' ' + T('أيام') + '</b></div>' +
           '<div class="srow big"><span>' + T('المجموع') + '</span><b>' + fmt(itemsTotal(cart)) + ' د.أ</b></div>' +
           '<div class="pbtns"><button type="button" class="bt pri" data-act="cbuy">' + T('اطلب الآن') + '</button><button type="button" class="bt sec" data-act="browse">' + T('متابعة التسوق') + '</button></div></div>';
@@ -1369,7 +1384,7 @@ class Component extends DCLogic {
       } else {
         list = '<div class="sum">' + ord.items.map(it => {
           const p = PM[it.id], z = p.sizes[it.si];
-          return '<div class="srow"><span>' + p.name + (p.cols[it.ci] && p.cols[it.ci].n ? ' · ' + T('اللون') + ': ' + p.cols[it.ci].n : '') + ' · ' + T('الحجم') + ': ' + z.l + ' · ' + T('الكمية') + ': ' + it.q + '</span><b>' + fmt(price(p, it.si) * it.q) + ' د.أ</b></div>';
+          return '<div class="srow"><span>' + p.name + (p.cols[it.ci] && p.cols[it.ci].n ? ' · ' + T('اللون') + ': ' + p.cols[it.ci].n : '') + ' · ' + T('الحجم') + ': ' + z.l + ' · ' + T('الكمية') + ': ' + it.q + '</span><b>' + fmt(cartUnitPrice(p, it.si) * it.q) + ' د.أ</b></div>';
         }).join('') + '<div class="srow"><span>' + T('مدة التنفيذ') + '</span><b>' + itemsDays(ord.items) + ' ' + T('أيام') + '</b></div>' +
           '<div class="srow" id="oship"></div><div class="srow big" id="otot"></div></div>';
       }
@@ -1453,7 +1468,7 @@ class Component extends DCLogic {
           }
           return;
         }
-        if (ord.mode === 'cart') { cart = []; save('sj_cart', cart); badges(); }
+        if (ord.mode === 'cart') { cart = []; appliedPromo = null; save('sj_cart', cart); badges(); }
         const first = this.esc(full.name.split(/\s+/)[0]);
         pn('O').innerHTML = stitchBox +
           '<div class="empty" style="padding:48px 8px"><svg class="okmark" viewBox="0 0 96 96" aria-hidden="true"><circle class="draw" pathLength="1" cx="48" cy="48" r="40" fill="none" stroke="#F29A52" stroke-width="4"/><path class="draw" pathLength="1" d="M28 49 L42 63 L69 34" fill="none" stroke="#F2E8D5" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" style="animation-delay:.6s"/></svg>' +
@@ -1484,12 +1499,12 @@ class Component extends DCLogic {
         L.push('المنتجات:');
         ord.items.forEach((it, i) => {
           const p = PM[it.id], z = p.sizes[it.si];
-          L.push((i + 1) + ') ' + p.raw, ...(p.cols[it.ci] && p.cols[it.ci].raw ? ['   اللون: ' + p.cols[it.ci].raw] : []), '   الحجم: ' + z.raw, '   الكمية: ' + it.q, '   السعر: ' + fmt(price(p, it.si) * it.q) + ' د.أ');
+          L.push((i + 1) + ') ' + p.raw, ...(p.cols[it.ci] && p.cols[it.ci].raw ? ['   اللون: ' + p.cols[it.ci].raw] : []), '   الحجم: ' + z.raw, '   الكمية: ' + it.q, '   السعر: ' + fmt(cartUnitPrice(p, it.si) * it.q) + ' د.أ');
         });
         L.push('', 'التوصيل: ' + fmt(shipFee()) + ' د.أ', 'السعر النهائي: ' + fmt(itemsTotal(ord.items) + shipFee()) + ' د.أ', 'مدة التنفيذ: ' + itemsDays(ord.items) + ' أيام');
       }
       if (ord.file) L.push('', cfgOn ? 'صورة التصميم مرفقة بالطلب في الموقع 📎' : 'سأرفق صورة التصميم في المحادثة 📎');
-      if (cfgOn) { submit({ name: nm, phone: ph, area: ar + ' (توصيل ' + fmt(shipFee()) + ' د.أ)', address: ad, mode: ord.mode, items: custom ? [] : ord.items.map(it => ({ name: PM[it.id].raw, size: PM[it.id].sizes[it.si].raw + (PM[it.id].cols[it.ci] && PM[it.id].cols[it.ci].raw ? ' - ' + PM[it.id].cols[it.ci].raw : ''), qty: it.q, price: price(PM[it.id], it.si) * it.q })), total: custom ? 0 : itemsTotal(ord.items) + shipFee(), days: custom ? 0 : itemsDays(ord.items) }, custom, L); return; }
+      if (cfgOn) { submit({ name: nm, phone: ph, area: ar + ' (توصيل ' + fmt(shipFee()) + ' د.أ)', address: ad, mode: ord.mode, items: custom ? [] : ord.items.map(it => ({ name: PM[it.id].raw, size: PM[it.id].sizes[it.si].raw + (PM[it.id].cols[it.ci] && PM[it.id].cols[it.ci].raw ? ' - ' + PM[it.id].cols[it.ci].raw : ''), qty: it.q, price: cartUnitPrice(PM[it.id], it.si) * it.q })), total: custom ? 0 : itemsTotal(ord.items) + shipFee(), days: custom ? 0 : itemsDays(ord.items) }, custom, L); return; }
       err.textContent = 'الطلب غير متاح حالياً، يرجى المحاولة لاحقاً.';
     };
 
@@ -1538,6 +1553,16 @@ class Component extends DCLogic {
         }
         case 'fav': toggleFav(id); if (openKey === 'P') renderP(false, false); break;
         case 'add': addCart(id, 0, 1); break;
+        case 'promo-apply': {
+          const field = doc.getElementById('promoInput');
+          const code = String(field ? field.value : '').trim().toUpperCase();
+          const found = promoRows.find(x => x.code === code);
+          if (!code) { toast('أدخل كود الخصم أولاً'); break; }
+          if (!found) { toast('كود الخصم غير صحيح أو غير مفعّل'); break; }
+          appliedPromo = { code: found.code, percent: found.percent };
+          renderC(false); toast('تم تفعيل خصم ' + found.percent + '%'); break;
+        }
+        case 'promo-remove': appliedPromo = null; renderC(false); toast('تمت إزالة كود الخصم'); break;
         case 'close': closeAll(); break;
         case 'tab-home': closeAll(); break;
         case 'tab-rev': closeAll(); go('reviews'); break;
